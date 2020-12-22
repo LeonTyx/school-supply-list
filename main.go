@@ -8,11 +8,10 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"school-supply-list/api"
+	"school-supply-list/database"
 )
 
-type DB struct {
-	db *sql.DB
-}
 
 func initEnv()  {
 	err := godotenv.Load("projectvars.env")
@@ -32,13 +31,7 @@ func main() {
 
 	r := gin.Default()
 
-	DBConnection := DB{db: db}
-	r.GET("/ping", DBConnection.dbt)
+	dbConnection := &database.DB{Db: db}
+	r.GET("/ping", api.Test(dbConnection))
 	_ = r.Run()
-}
-
-func (env *DB) dbt(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
 }
