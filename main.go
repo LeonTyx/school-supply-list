@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"log"
@@ -26,7 +28,7 @@ func initEnv()  {
 //Will cycle through all changes in db/migrations until the database is up to date
 func PerformMigrations() {
 	m, err := migrate.New(
-		"file://db/migrations",
+		"file://database/migrations",
 		os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
