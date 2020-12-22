@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/antonlindstrom/pgstore"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"log"
 	"os"
 	"school-supply-list/api"
