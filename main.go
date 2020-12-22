@@ -20,8 +20,7 @@ func initEnv()  {
 	}
 }
 
-func main() {
-	initEnv()
+func initDBConnection() *sql.DB{
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	// if there is an error opening the connection, handle it
 	if err != nil {
@@ -29,8 +28,14 @@ func main() {
 		panic(err.Error())
 	}
 
-	r := gin.Default()
+	return db
+}
 
+func main() {
+	initEnv()
+	db := initDBConnection()
+
+	r := gin.Default()
 	dbConnection := &database.DB{Db: db}
 	r.GET("/ping", api.Test(dbConnection))
 	_ = r.Run()
