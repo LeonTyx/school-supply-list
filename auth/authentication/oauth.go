@@ -66,7 +66,7 @@ func GetSeed() int64 {
 	return seed
 }
 
-func HandleGoogleLogin(db *database.DB) gin.HandlerFunc{
+func HandleGoogleLogin(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		state, err := db.SessionStore.Get(c.Request, "state")
 		if err != nil {
@@ -88,7 +88,6 @@ func HandleGoogleLogin(db *database.DB) gin.HandlerFunc{
 	}
 
 }
-
 
 func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -142,7 +141,7 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getRoleFromGoogleID(c *gin.Context,db *database.DB, googleID string) (authorization.Role, int, error) {
+func getRoleFromGoogleID(c *gin.Context, db *database.DB, googleID string) (authorization.Role, int, error) {
 	var role authorization.Role
 	var userID int
 	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc, user_id from role 
@@ -317,7 +316,7 @@ type Profile struct {
 	Email   string             `json:"email"`
 	Name    string             `json:"name"`
 	Picture string             `json:"picture"`
-	Role     authorization.Role `json:"role"`
+	Role    authorization.Role `json:"role"`
 	ID      int                `json:"user_id"`
 }
 
@@ -355,7 +354,7 @@ func GetProfile(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func RefreshSession(db *database.DB) gin.HandlerFunc{
+func RefreshSession(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := db.SessionStore.Get(c.Request, "session")
 		if err != nil {
@@ -373,14 +372,13 @@ func RefreshSession(db *database.DB) gin.HandlerFunc{
 			if err != nil {
 				c.AbortWithStatusJSON(500, "The server was unable to refresh this session")
 			} else {
-				c.JSON(200,"successful refresh")
+				c.JSON(200, "successful refresh")
 			}
 		} else {
 			c.Redirect(http.StatusTemporaryRedirect, "./login")
 		}
 	}
 }
-
 
 func PanicOnErr(err error) {
 	if err != nil {

@@ -13,9 +13,9 @@ func CheckDBErr(err *pq.Error, c *gin.Context) {
 		case "23505":
 			c.AbortWithStatusJSON(400, "A unique constraint has been violated.")
 		case "22004":
-			c.AbortWithStatusJSON( 400, "Value cannot be null")
+			c.AbortWithStatusJSON(400, "Value cannot be null")
 		default:
-			c.AbortWithStatusJSON( 503, "There was an error contacting the database.")
+			c.AbortWithStatusJSON(503, "There was an error contacting the database.")
 		}
 		return
 	}

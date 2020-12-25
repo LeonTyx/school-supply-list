@@ -9,13 +9,13 @@ import (
 )
 
 type DB struct {
-	Db   *sql.DB
+	Db           *sql.DB
 	SessionStore *pgstore.PGStore
 }
 
 //Initialize a database connection using the environment variable DATABASE_URL
 //Returns type *sql.DB
-func InitDBConnection() *sql.DB{
+func InitDBConnection() *sql.DB {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	// if there is an error opening the connection, handle it
 	if err != nil {
@@ -26,7 +26,7 @@ func InitDBConnection() *sql.DB{
 	return db
 }
 
-func InitOauthStore() *pgstore.PGStore{
+func InitOauthStore() *pgstore.PGStore {
 	var err error
 
 	SessionStore, err := pgstore.NewPGStore(os.Getenv("DATABASE_URL"), []byte(os.Getenv("DATABASE_SECRET")))

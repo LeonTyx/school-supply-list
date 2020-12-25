@@ -18,7 +18,7 @@ import (
 )
 
 //Load the environment variables from the projectvars.env file
-func initEnv()  {
+func initEnv() {
 	err := godotenv.Load("projectvars.env")
 	if err != nil {
 		log.Fatal(err)
@@ -39,8 +39,6 @@ func PerformMigrations() {
 	}
 	fmt.Println("Database migrations completed. Database should be up to date")
 }
-
-
 
 func main() {
 	initEnv()
