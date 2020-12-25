@@ -1,7 +1,46 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+	"github.com/antonlindstrom/pgstore"
+	"net/http"
+	"os"
+)
 
 type DB struct {
 	Db   *sql.DB
+	SessionStore *pgstore.PGStore
+}
+
+//Initialize a database connection using the environment variable DATABASE_URL
+//Returns type *sql.DB
+func InitDBConnection() *sql.DB{
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	// if there is an error opening the connection, handle it
+	if err != nil {
+		fmt.Println("Cannot open SQL connection")
+		panic(err.Error())
+	}
+
+	return db
+}
+
+func InitOauthStore() *pgstore.PGStore{
+	var err error
+
+	SessionStore, err := pgstore.NewPGStore(os.Getenv("DATABASE_URL"), []byte(os.Getenv("DATABASE_SECRET")))
+	if err != nil {
+		panic(err)
+	}
+
+	SessionStore.MaxAge(1800)
+	SessionStore.Options.SameSite = http.SameSiteLaxMode
+	if os.Getenv("ENV") == "DEV" {
+		SessionStore.Options.Secure = false
+	} else {
+		SessionStore.Options.Secure = true
+	}
+	fmt.Println("Successful oauth store connection!")
+	return SessionStore
 }
