@@ -36,6 +36,7 @@ func InitOauthStore() *pgstore.PGStore {
 
 	SessionStore.MaxAge(1800)
 	SessionStore.Options.SameSite = http.SameSiteLaxMode
+	SessionStore.Options.HttpOnly = true
 	if os.Getenv("ENV") == "DEV" {
 		SessionStore.Options.Secure = false
 	} else {

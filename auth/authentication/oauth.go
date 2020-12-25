@@ -14,7 +14,6 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"school-supply-list/api"
 	"school-supply-list/auth/authorization"
 	"school-supply-list/database"
 	"strconv"
@@ -113,7 +112,7 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 		if !UserExists(userData.Email, db) {
 			err = CreateUser(userData, db)
 			if err != nil {
-				api.CheckDBErr(err.(*pq.Error), c)
+				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
 		} else {
@@ -341,7 +340,7 @@ func GetProfile(db *database.DB) gin.HandlerFunc {
 			GoogleIDStr := fmt.Sprintf("%v", GoogleID)
 			role, userID, err := getRoleFromGoogleID(c, db, GoogleIDStr)
 			if err != nil {
-				api.CheckDBErr(err.(*pq.Error), c)
+				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
 
