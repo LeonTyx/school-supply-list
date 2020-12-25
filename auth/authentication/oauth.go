@@ -95,8 +95,9 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(500, "The server was unable to retrieve session state")
 			return
 		}
+		state := fmt.Sprintf("%v", stateSession.Values["state"])
 
-		userData, err := GetUserInfo(c.Request.FormValue("state"), c.Request.FormValue("code"), c.Request, db)
+		userData, err := GetUserInfo(state, c.Request.FormValue("code"), c.Request)
 		if err != nil {
 			fmt.Println("Error getting content: " + err.Error())
 			c.Redirect(http.StatusTemporaryRedirect, "/")
@@ -240,16 +241,9 @@ type User struct {
 	AccessToken string
 }
 
-func GetUserInfo(state string, code string, r *http.Request, db *database.DB) (User, error) {
+func GetUserInfo(state string, code string, r *http.Request) (User, error) {
 	var userData User
-	stateSession, err := db.SessionStore.Get(r, "state")
-	if err != nil {
-		return userData, err
-	}
-
-	//Check if the oauth state google returned matches the one saved
-
-	if state != stateSession.Values["state"] {
+	if state != r.FormValue("state") {
 		return userData, fmt.Errorf("invalid oauth state")
 	}
 
