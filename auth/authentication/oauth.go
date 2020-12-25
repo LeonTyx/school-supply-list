@@ -83,7 +83,7 @@ func HandleGoogleLogin(db *database.DB) gin.HandlerFunc {
 		}
 
 		url := GoogleOauthConfig.AuthCodeURL(stateString)
-		c.Redirect(301, url)
+		c.Redirect(http.StatusTemporaryRedirect, url)
 	}
 
 }
@@ -96,7 +96,6 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 			return
 		}
 		state := fmt.Sprintf("%v", stateSession.Values["state"])
-
 		userData, err := GetUserInfo(state, c.Request.FormValue("code"), c.Request)
 		if err != nil {
 			fmt.Println("Error getting content: " + err.Error())
@@ -141,27 +140,30 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getRoleFromGoogleID(c *gin.Context, db *database.DB, googleID string) (authorization.Role, int, error) {
-	var role authorization.Role
+func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, int, error) {
+	var roles []authorization.Role
 	var userID int
 	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc, user_id from role 
 											INNER JOIN account a on role.role_id = a.role_id
 											where a.google_id=$1`, googleID)
 	if err != nil {
-		return role, userID, err
+		return nil, userID, err
 	}
+
 	for roleRows.Next() {
+		var role authorization.Role
 		err = roleRows.Scan(&role.ID, &role.Name, &role.Desc, &userID)
 		if err != nil {
-			return role, userID, err
+			return nil, userID, err
 		}
 		role.Resources, err = getPolicyFromRoleID(c, role.ID, db)
 		if err != nil {
-			return role, userID, err
+			return nil, userID, err
 		}
+		roles = append(roles, role)
 	}
 
-	return role, userID, nil
+	return roles, userID, nil
 }
 
 func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]authorization.Resource, error) {
@@ -309,7 +311,7 @@ type Profile struct {
 	Email   string             `json:"email"`
 	Name    string             `json:"name"`
 	Picture string             `json:"picture"`
-	Role    authorization.Role `json:"role"`
+	Roles   []authorization.Role `json:"roles"`
 	ID      int                `json:"user_id"`
 }
 
@@ -332,7 +334,7 @@ func GetProfile(db *database.DB) gin.HandlerFunc {
 			PictureUrlStr := fmt.Sprintf("%v", PictureUrl)
 			GoogleID := session.Values["GoogleId"]
 			GoogleIDStr := fmt.Sprintf("%v", GoogleID)
-			role, userID, err := getRoleFromGoogleID(c, db, GoogleIDStr)
+			role, userID, err := getRolesFromGoogleID(c, db, GoogleIDStr)
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
