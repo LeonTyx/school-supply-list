@@ -140,58 +140,6 @@ func handleGoogleCallback(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, int, error) {
-	var roles []authorization.Role
-	var userID int
-	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc, user_uuid from role 
-											INNER JOIN user_role_bridge urb on role.role_id = urb.role_id
-											INNER JOIN account a on urb.user_uuid = a.user_id
-											where a.google_id=$1`, googleID)
-	if err != nil {
-		return nil, userID, err
-	}
-
-	for roleRows.Next() {
-		var role authorization.Role
-		err = roleRows.Scan(&role.ID, &role.Name, &role.Desc, &userID)
-		if err != nil {
-			return nil, userID, err
-		}
-		role.Resources, err = getPolicyFromRoleID(c, role.ID, db)
-		if err != nil {
-			return nil, userID, err
-		}
-		roles = append(roles, role)
-	}
-
-	return roles, userID, nil
-}
-
-func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]authorization.Resource, error) {
-	var resources []authorization.Resource
-	resourcesRows, err := db.Db.Query(`SELECT resc.resource_id, resc.resource_name,rrb.can_add,
-						rrb.can_delete, rrb.can_edit, rrb.can_view from resource resc
-						INNER JOIN role_resource_bridge rrb on resc.resource_id = rrb.resource_id
-						WHERE rrb.role_id=$1`, roleID)
-
-	if err != nil {
-		return resources, err
-	}
-
-	for resourcesRows.Next() {
-		var resource authorization.Resource
-		err := resourcesRows.Scan(&resource.ResourceID, &resource.Resource, &resource.Policy.CanAdd, &resource.Policy.CanDelete,
-			&resource.Policy.CanEdit, &resource.Policy.CanView)
-		if err != nil {
-			c.AbortWithStatusJSON(500, "The server was unable to retrieve permission")
-		}
-		resources = append(resources, resource)
-	}
-	_ = resourcesRows.Close()
-
-	return resources, nil
-}
-
 func createUser(userData User, db *database.DB) error {
 	// Prepare the sql query for later
 	insert, err := db.Db.Prepare(`INSERT INTO account (email, access_token, google_id, expires_in, google_picture, name) VALUES ($1, $2, $3, $4, $5, $6)`)
@@ -286,7 +234,6 @@ func handleGoogleLogout(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-
 		if session.ID != "" {
 			session.Options.MaxAge = -1
 
@@ -305,11 +252,11 @@ func handleGoogleLogout(db *database.DB) gin.HandlerFunc {
 }
 
 type Profile struct {
-	Email   string             `json:"email"`
-	Name    string             `json:"name"`
-	Picture string             `json:"picture"`
+	Email   string               `json:"email"`
+	Name    string               `json:"name"`
+	Picture string               `json:"picture"`
 	Roles   []authorization.Role `json:"roles"`
-	ID      int                `json:"user_id"`
+	ID      string               `json:"user_id"`
 }
 
 func refreshSession(db *database.DB) gin.HandlerFunc {
@@ -353,7 +300,9 @@ func getProfile(db *database.DB) gin.HandlerFunc {
 			PictureUrlStr := fmt.Sprintf("%v", PictureUrl)
 			GoogleID := session.Values["GoogleId"]
 			GoogleIDStr := fmt.Sprintf("%v", GoogleID)
-			role, userID, err := getRolesFromGoogleID(c, db, GoogleIDStr)
+			role, err := getRolesFromGoogleID(c, db, GoogleIDStr)
+			userID, err := getUUIDFromGoogleID(c, db, GoogleIDStr)
+
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
@@ -367,7 +316,73 @@ func getProfile(db *database.DB) gin.HandlerFunc {
 		}
 	}
 }
+func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, error) {
+	var roles []authorization.Role
+	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc from role 
+											INNER JOIN user_role_bridge urb on role.role_id = urb.role_id
+											INNER JOIN account a on urb.user_uuid = a.user_id
+											where a.google_id=$1`, googleID)
+	if err != nil {
+		return nil, err
+	}
 
+	for roleRows.Next() {
+		var role authorization.Role
+		err = roleRows.Scan(&role.ID, &role.Name, &role.Desc)
+		if err != nil {
+			return nil, err
+		}
+		role.Resources, err = getPolicyFromRoleID(c, role.ID, db)
+		if err != nil {
+			return nil, err
+		}
+		roles = append(roles, role)
+	}
+
+	return roles, nil
+}
+
+func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]authorization.Resource, error) {
+	var resources []authorization.Resource
+	resourcesRows, err := db.Db.Query(`SELECT resc.resource_id, resc.resource_name,rrb.can_add,
+						rrb.can_delete, rrb.can_edit, rrb.can_view from resource resc
+						INNER JOIN role_resource_bridge rrb on resc.resource_id = rrb.resource_id
+						WHERE rrb.role_id=$1`, roleID)
+
+	if err != nil {
+		return resources, err
+	}
+
+	for resourcesRows.Next() {
+		var resource authorization.Resource
+		err := resourcesRows.Scan(&resource.ResourceID, &resource.Resource, &resource.Policy.CanAdd, &resource.Policy.CanDelete,
+			&resource.Policy.CanEdit, &resource.Policy.CanView)
+		if err != nil {
+			c.AbortWithStatusJSON(500, "The server was unable to retrieve permission")
+		}
+		resources = append(resources, resource)
+	}
+	_ = resourcesRows.Close()
+
+	return resources, nil
+}
+
+func getUUIDFromGoogleID(c *gin.Context, db *database.DB, googleID string) (string, error) {
+	var userID string
+	userRoles, err := db.Db.Query(`SELECT user_id from account a where a.google_id=$1`, googleID)
+	if err != nil {
+		return userID, err
+	}
+
+	for userRoles.Next() {
+		err = userRoles.Scan(&userID)
+		if err != nil {
+			return userID, err
+		}
+	}
+
+	return userID, nil
+}
 
 func PanicOnErr(err error) {
 	if err != nil {
