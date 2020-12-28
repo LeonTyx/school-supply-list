@@ -3,14 +3,9 @@ package authorization
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
+	"log"
 	"school-supply-list/database"
 )
-
-type ResourceScope struct {
-	Resource map[string]string
-	Scope    map[string]string
-	ECAID    string
-}
 
 type Resource struct {
 	ResourceID int    `json:"id"`
@@ -47,10 +42,8 @@ func ValidSession(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func ResourceCtx(db *database.DB) gin.HandlerFunc {
+func LoadPolicy(db *database.DB, resources Resource) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		resourceScope := c.Request.Context().Value("resource_scope")
-
 		session, err := db.SessionStore.Get(c.Request, "session")
 		if err != nil {
 			c.AbortWithStatusJSON(500, "The server was unable to retrieve this session")
@@ -58,7 +51,7 @@ func ResourceCtx(db *database.DB) gin.HandlerFunc {
 		}
 		googleID := session.Values["GoogleId"]
 
-		policy, err := getPolicy(googleID.(string), resourceScope.(ResourceScope))
+		policy, err := getPolicy(db, googleID.(string), resources)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
@@ -68,14 +61,26 @@ func ResourceCtx(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getPolicy(googleID string, resourceScope ResourceScope) (Policy, error) {
-	var memberPolicy Policy
-
-	policy := Policy{
-		CanAdd:    memberPolicy.CanAdd,
-		CanView:   memberPolicy.CanView,
-		CanEdit:   memberPolicy.CanEdit,
-		CanDelete: memberPolicy.CanDelete,
+func getPolicy(db *database.DB, googleID string, resource Resource) (Policy, error) {
+	var policy Policy
+	policyQuery, err := db.Db.Query(`SELECT bridge.can_add, bridge.can_view, bridge.can_edit, bridge.can_delete
+											FROM account acc INNER JOIN user_role_bridge urb ON acc.user_id = urb.user_uuid
+											LEFT JOIN role_resource_bridge bridge ON bridge.role_id = urb.role_id
+											INNER JOIN resource rsc ON bridge.resource_id = rsc.resource_id
+											WHERE google_id=$1 AND rsc.resource_name=$2`, googleID, resource)
+	if err != nil {
+		log.Fatal(err)
+		return policy, err
+	}
+	defer policyQuery.Close()
+	for policyQuery.Next() {
+		var temp Policy
+		err = policyQuery.Scan(&temp.CanAdd, &temp.CanView,
+			&temp.CanEdit, &temp.CanDelete)
+		policy.CanAdd = temp.CanAdd || policy.CanAdd
+		policy.CanDelete = temp.CanDelete || policy.CanDelete
+		policy.CanEdit = temp.CanEdit || policy.CanEdit
+		policy.CanView = temp.CanView || policy.CanView
 	}
 
 	return policy, nil

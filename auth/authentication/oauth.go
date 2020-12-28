@@ -52,20 +52,20 @@ type Error struct {
 //All the routes created by the package nested in
 // oauth/v1/*
 func Routes(r *gin.RouterGroup, db *database.DB) {
-	r.GET("/login", HandleGoogleLogin(db))
-	r.GET("/callback", HandleGoogleCallback(db))
-	r.GET("/logout", HandleGoogleLogout(db))
-	r.GET("/profile", GetProfile(db))
-	r.GET("/refresh", RefreshSession(db))
+	r.GET("/login", handleGoogleLogin(db))
+	r.GET("/callback", handleGoogleCallback(db))
+	r.GET("/logout", handleGoogleLogout(db))
+	r.GET("/profile", getProfile(db))
+	r.GET("/refresh", refreshSession(db))
 }
 
-func GetSeed() int64 {
+func getSeed() int64 {
 	seed := time.Now().UnixNano() // A new random seed (independent from state)
 	rand.Seed(seed)
 	return seed
 }
 
-func HandleGoogleLogin(db *database.DB) gin.HandlerFunc {
+func handleGoogleLogin(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		state, err := db.SessionStore.Get(c.Request, "state")
 		if err != nil {
@@ -73,7 +73,7 @@ func HandleGoogleLogin(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-		stateString := strconv.FormatInt(GetSeed(), 10)
+		stateString := strconv.FormatInt(getSeed(), 10)
 		state.Values["state"] = stateString
 		err = state.Save(c.Request, c.Writer)
 
@@ -88,7 +88,7 @@ func HandleGoogleLogin(db *database.DB) gin.HandlerFunc {
 
 }
 
-func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
+func handleGoogleCallback(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		stateSession, err := db.SessionStore.Get(c.Request, "state")
 		if err != nil {
@@ -96,7 +96,7 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 			return
 		}
 		state := fmt.Sprintf("%v", stateSession.Values["state"])
-		userData, err := GetUserInfo(state, c.Request.FormValue("code"), c.Request)
+		userData, err := getUserInfo(state, c.Request.FormValue("code"), c.Request)
 		if err != nil {
 			fmt.Println("Error getting content: " + err.Error())
 			c.Redirect(http.StatusTemporaryRedirect, "/")
@@ -109,14 +109,14 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 		// otherwise replace the previous access token field
 		// with the new one
 
-		if !UserExists(userData.Email, db) {
-			err = CreateUser(userData, db)
+		if !userExists(userData.Email, db) {
+			err = createUser(userData, db)
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
 		} else {
-			ReplaceAccessToken(userData, db)
+			replaceAccessToken(userData, db)
 		}
 
 		// set the user information
@@ -143,8 +143,9 @@ func HandleGoogleCallback(db *database.DB) gin.HandlerFunc {
 func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, int, error) {
 	var roles []authorization.Role
 	var userID int
-	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc, user_id from role 
-											INNER JOIN account a on role.role_id = a.role_id
+	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc, user_uuid from role 
+											INNER JOIN user_role_bridge urb on role.role_id = urb.role_id
+											INNER JOIN account a on urb.user_uuid = a.user_id
 											where a.google_id=$1`, googleID)
 	if err != nil {
 		return nil, userID, err
@@ -191,7 +192,7 @@ func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]auth
 	return resources, nil
 }
 
-func CreateUser(userData User, db *database.DB) error {
+func createUser(userData User, db *database.DB) error {
 	// Prepare the sql query for later
 	insert, err := db.Db.Prepare(`INSERT INTO account (email, access_token, google_id, expires_in, google_picture, name) VALUES ($1, $2, $3, $4, $5, $6)`)
 	if err != nil {
@@ -208,17 +209,15 @@ func CreateUser(userData User, db *database.DB) error {
 	return nil
 }
 
-func UserExists(email string, db *database.DB) bool {
-	fmt.Println("Checking if user exist: ", email)
-
+func userExists(email string, db *database.DB) bool {
 	// Prepare the sql query for later
 	rows, err := db.Db.Query("SELECT COUNT(*) as count FROM account WHERE email = $1", email)
 	PanicOnErr(err)
 
-	return CheckCount(rows) > 0
+	return checkCount(rows) > 0
 }
 
-func CheckCount(rows *sql.Rows) (count int) {
+func checkCount(rows *sql.Rows) (count int) {
 	for rows.Next() {
 		err := rows.Scan(&count)
 		PanicOnErr(err)
@@ -226,7 +225,7 @@ func CheckCount(rows *sql.Rows) (count int) {
 	return count
 }
 
-func ReplaceAccessToken(userData User, db *database.DB) {
+func replaceAccessToken(userData User, db *database.DB) {
 	_, err := db.Db.Query("UPDATE account SET access_token=$1, expires_in=$2, google_picture=$3, name=$4 WHERE email = $5",
 		userData.AccessToken, userData.ExpiresIn, userData.Picture, userData.Name, userData.Email)
 	if err != nil {
@@ -243,7 +242,7 @@ type User struct {
 	AccessToken string
 }
 
-func GetUserInfo(state string, code string, r *http.Request) (User, error) {
+func getUserInfo(state string, code string, r *http.Request) (User, error) {
 	var userData User
 	if state != r.FormValue("state") {
 		return userData, fmt.Errorf("invalid oauth state")
@@ -277,7 +276,7 @@ func GetUserInfo(state string, code string, r *http.Request) (User, error) {
 	return userData, nil
 }
 
-func HandleGoogleLogout(db *database.DB) gin.HandlerFunc {
+func handleGoogleLogout(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fmt.Println("Attempting to expire session")
 
@@ -287,8 +286,6 @@ func HandleGoogleLogout(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println("current session: ", session)
-		fmt.Println("Is session new? ", session.IsNew)
 
 		if session.ID != "" {
 			session.Options.MaxAge = -1
@@ -315,7 +312,7 @@ type Profile struct {
 	ID      int                `json:"user_id"`
 }
 
-func GetProfile(db *database.DB) gin.HandlerFunc {
+func refreshSession(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := db.SessionStore.Get(c.Request, "session")
 		if err != nil {
@@ -324,7 +321,29 @@ func GetProfile(db *database.DB) gin.HandlerFunc {
 		}
 
 		if session.ID != "" {
-			fmt.Println("Getting cookies for profile")
+			session.Options.MaxAge = 3600
+
+			err = session.Save(c.Request, c.Writer)
+			if err != nil {
+				c.AbortWithStatusJSON(500, "The server was unable to refresh this session")
+			} else {
+				c.JSON(200, "successful refresh")
+			}
+		} else {
+			c.Redirect(http.StatusTemporaryRedirect, "./login")
+		}
+	}
+}
+
+func getProfile(db *database.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session, err := db.SessionStore.Get(c.Request, "session")
+		if err != nil {
+			c.AbortWithStatusJSON(500, "The server was unable to retrieve this session")
+			return
+		}
+
+		if session.ID != "" {
 			// get some session values
 			Email := session.Values["Email"]
 			EmailStr := fmt.Sprintf("%v", Email)
@@ -349,31 +368,6 @@ func GetProfile(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func RefreshSession(db *database.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		session, err := db.SessionStore.Get(c.Request, "session")
-		if err != nil {
-			c.AbortWithStatusJSON(500, "The server was unable to retrieve this session")
-			return
-		}
-
-		fmt.Println("Current session: ", session)
-		fmt.Println("Is session new? ", session.IsNew)
-
-		if session.ID != "" {
-			session.Options.MaxAge = 3600
-
-			err = session.Save(c.Request, c.Writer)
-			if err != nil {
-				c.AbortWithStatusJSON(500, "The server was unable to refresh this session")
-			} else {
-				c.JSON(200, "successful refresh")
-			}
-		} else {
-			c.Redirect(http.StatusTemporaryRedirect, "./login")
-		}
-	}
-}
 
 func PanicOnErr(err error) {
 	if err != nil {

@@ -57,11 +57,11 @@ create table if not exists user_role_bridge
         constraint user_role_bridge_account_user_id_fk
             references account
             on delete cascade,
-    role_d    integer not null
+    role_id    integer not null
         constraint user_role_bridge_role_role_id_fk
             references role
             on delete cascade,
     constraint user_role_bridge_pk
-        primary key (user_uuid, role_d)
+        primary key (user_uuid, role_id)
 );
 
