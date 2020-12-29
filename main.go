@@ -52,9 +52,9 @@ func main() {
 	defer SStore.StopCleanup(SStore.Cleanup(time.Minute * 5))
 	r := gin.Default()
 	dbConnection := &database.DB{Db: db, SessionStore: SStore}
-	r.GET("/ping", api.Test(dbConnection))
 
 	authentication.Routes(r.Group("oauth/v1"), dbConnection)
+	api.Routes(r.Group("api/v1"), dbConnection)
 
 	_ = r.Run()
 }
