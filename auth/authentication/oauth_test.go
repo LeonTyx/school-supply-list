@@ -12,7 +12,8 @@ import (
 	"school-supply-list/database"
 	"testing"
 )
-func createRouter() *gin.Engine{
+
+func createRouter() *gin.Engine {
 	r := gin.Default()
 	err := godotenv.Load("../../projectvars.env")
 	if err != nil {
@@ -31,7 +32,7 @@ func createRouter() *gin.Engine{
 	return r
 }
 
-func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.DB){
+func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.DB) {
 	session, err := db.SessionStore.Get(r, "session")
 	if err != nil {
 		log.Fatal("Could not create session")
@@ -45,7 +46,7 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 	}
 }
 
-func TestProfile(t *testing.T){
+func TestProfile(t *testing.T) {
 	r := createRouter()
 	req, err := http.NewRequest("GET", "/profile", nil)
 
@@ -55,7 +56,7 @@ func TestProfile(t *testing.T){
 
 	w := httptest.NewRecorder()
 
-	createSession(req, w, &database.DB{SessionStore:database.InitOauthStore()})
+	createSession(req, w, &database.DB{SessionStore: database.InitOauthStore()})
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -70,4 +71,3 @@ func TestProfile(t *testing.T){
 	fmt.Println("Profile picture URL: ", profile.Picture)
 	fmt.Println("UUID: ", profile.ID)
 }
-

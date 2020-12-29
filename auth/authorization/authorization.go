@@ -42,7 +42,7 @@ func ValidSession(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func LoadPolicy(db *database.DB, resources Resource) gin.HandlerFunc {
+func LoadPolicy(db *database.DB, resources string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := db.SessionStore.Get(c.Request, "session")
 		if err != nil {
@@ -61,7 +61,7 @@ func LoadPolicy(db *database.DB, resources Resource) gin.HandlerFunc {
 	}
 }
 
-func getPolicy(db *database.DB, googleID string, resource Resource) (Policy, error) {
+func getPolicy(db *database.DB, googleID string, resource string) (Policy, error) {
 	var policy Policy
 	policyQuery, err := db.Db.Query(`SELECT bridge.can_add, bridge.can_view, bridge.can_edit, bridge.can_delete
 											FROM account acc INNER JOIN user_role_bridge urb ON acc.user_id = urb.user_uuid

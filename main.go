@@ -22,7 +22,7 @@ func initEnv() {
 	}
 }
 
-func createServer(dbConnection *database.DB) *gin.Engine{
+func createServer(dbConnection *database.DB) *gin.Engine {
 	r := gin.Default()
 
 	authentication.Routes(r.Group("oauth/v1"), dbConnection)

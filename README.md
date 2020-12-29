@@ -22,5 +22,6 @@ GOOGLE_CLIENT_ID=<CLIENTID>
 GOOGLE_CLIENT_SECRET=<SECRET>
 ``
 
-##Add Migrations
+## Add Migrations
+
 ``migrate create -ext sql -dir database/migrations -seq migration_name``
