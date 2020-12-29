@@ -301,7 +301,7 @@ func getProfile(db *database.DB) gin.HandlerFunc {
 			GoogleID := session.Values["GoogleId"]
 			GoogleIDStr := fmt.Sprintf("%v", GoogleID)
 			role, err := getRolesFromGoogleID(c, db, GoogleIDStr)
-			userID, err := getUUIDFromGoogleID(c, db, GoogleIDStr)
+			userID, err := getUUIDFromGoogleID(db, GoogleIDStr)
 
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
@@ -367,7 +367,7 @@ func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]auth
 	return resources, nil
 }
 
-func getUUIDFromGoogleID(c *gin.Context, db *database.DB, googleID string) (string, error) {
+func getUUIDFromGoogleID(db *database.DB, googleID string) (string, error) {
 	var userID string
 	userRoles, err := db.Db.Query(`SELECT user_id from account a where a.google_id=$1`, googleID)
 	if err != nil {
