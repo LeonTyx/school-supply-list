@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"log"
+	"os"
 	"school-supply-list/api"
 	"school-supply-list/auth/authentication"
 	"school-supply-list/database"
@@ -16,9 +17,12 @@ import (
 
 //Load the environment variables from the projectvars.env file
 func initEnv() {
-	err := godotenv.Load("projectvars.env")
-	if err != nil {
-		log.Fatal(err)
+	if _, err := os.Stat("projectvars.env"); err == nil {
+		err := godotenv.Load("variables.env")
+		if err != nil {
+			fmt.Println("Error loading environment.env")
+		}
+		fmt.Println("Current environment:", os.Getenv("ENV"))
 	}
 }
 
