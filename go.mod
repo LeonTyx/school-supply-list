@@ -1,3 +1,4 @@
+// +heroku goVersion 1.15.6
 module school-supply-list
 
 go 1.15
