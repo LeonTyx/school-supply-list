@@ -8,7 +8,7 @@ import (
 )
 
 type school struct {
-	SchoolID int `json:"school_id"`
+	SchoolID   int    `json:"school_id"`
 	SchoolName string `json:"school_name"`
 }
 
@@ -17,7 +17,7 @@ func createSchool(db *database.DB) gin.HandlerFunc {
 		id := c.Param("id")
 
 		c.JSON(200, gin.H{
-			"id": id,
+			"id":   id,
 			"body": c.PostForm("school_name"),
 		})
 	}

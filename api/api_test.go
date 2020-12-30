@@ -39,7 +39,7 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 	session.Values["Picture"] = "img.png"
 
 	err = session.Save(r, w)
-	
+
 	if err != nil {
 		fmt.Print("Unable to store session data")
 	}
@@ -48,13 +48,13 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 func TestCreateSchool(t *testing.T) {
 	r := createRouter()
 	req, err := http.NewRequest("PUT", "/api/v1/school", nil)
-	
+
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 
 	w := httptest.NewRecorder()
-	
+
 	createSession(req, w, &database.DB{SessionStore: database.InitOauthStore()})
 
 	r.ServeHTTP(w, req)
@@ -107,7 +107,6 @@ func TestUpdateSchool(t *testing.T) {
 	contents, _ := ioutil.ReadAll(w.Body)
 	err = json.Unmarshal(contents, &school)
 }
-
 
 func TestDeleteSchool(t *testing.T) {
 	r := createRouter()
