@@ -19,6 +19,8 @@ and secret in the ``credentials`` tab Populate the projectvars.env file with you
 
 ``
 GOOGLE_CLIENT_ID=<CLIENTID>
+
+
 GOOGLE_CLIENT_SECRET=<SECRET>
 ``
 
