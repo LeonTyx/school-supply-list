@@ -15,6 +15,15 @@ func createSupplyList(db *database.DB) gin.HandlerFunc {
 
 func getSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		id := c.Param("id")
+		c.JSON(200, gin.H{
+			"message": id,
+		})
+	}
+}
+
+func getSupplyLists(db *database.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "we did it!",
 		})

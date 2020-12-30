@@ -12,23 +12,28 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 	r.PUT("/school", authorization.ValidSession(db),
 		authorization.CanCreate(),
 		createSchool(db))
-	r.GET("/school",
+	r.GET("/school/:id",
 		getSchool(db))
-	r.POST("/school", authorization.ValidSession(db),
+	r.GET("/schools",
+		getSchools(db))
+	r.POST("/school/:id", authorization.ValidSession(db),
 		authorization.CanEdit(),
 		updateSchool(db))
-	r.DELETE("/school", authorization.ValidSession(db),
+	r.DELETE("/school/:id", authorization.ValidSession(db),
 		authorization.CanDelete(),
 		deleteSchool(db))
 
 	r.PUT("/supply-list", authorization.ValidSession(db),
 		authorization.CanCreate(),
 		createSupplyList(db))
-	r.GET("/supply-list", getSupplyList(db))
-	r.POST("/supply-list", authorization.ValidSession(db),
+	r.GET("/supply-list/:id",
+		getSupplyList(db))
+	r.GET("/supply-lists",
+		getSupplyLists(db))
+	r.POST("/supply-list/:id", authorization.ValidSession(db),
 		authorization.CanEdit(),
 		updateSupplyList(db))
-	r.DELETE("/supply-list", authorization.ValidSession(db),
+	r.DELETE("/supply-list/:id", authorization.ValidSession(db),
 		authorization.CanDelete(),
 		deleteSupplyList(db))
 }

@@ -38,6 +38,9 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 		log.Fatal("Could not create session")
 	}
 	session.Values["GoogleId"] = "111644517051019423711"
+	session.Values["Email"] = "leontyx@gmail.com"
+	session.Values["Name"] = "leon"
+	session.Values["Picture"] = "img.png"
 
 	err = session.Save(r, w)
 
