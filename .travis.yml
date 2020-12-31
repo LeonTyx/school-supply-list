@@ -5,9 +5,14 @@ before_script:
   - psql -c 'create database school-supply-list;' -U postgres
 addons:
   postgresql: "12.5"
+  apt:
+    packages:
+      - postgresql-12.5
+      - postgresql-client-12.5
 env:
   global:
     - DATABASE_URL = postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
+    - PGPORT = 5432
 deploy:
   provider: heroku
   api_key:
