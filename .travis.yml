@@ -9,8 +9,8 @@ before_script:
   - psql -c 'create database school-supply-list;' -U postgres
 env:
   global:
-    - DATABASE_URL = postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
-    - PGPORT = 5433
+    - DATABASE_URL=postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
+    - PGPORT=5433
 deploy:
   provider: heroku
   api_key:
