@@ -88,8 +88,11 @@ func getPolicy(db *database.DB, googleID string, resource string) (Policy, error
 
 func CanView() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		policy := c.Request.Context().Value("policy").(Policy)
-
+		policyStr, exists := c.Get("policy")
+		if !exists{
+			c.AbortWithStatusJSON(500, "Policy was not loaded.")
+		}
+		policy := policyStr.(Policy)
 		if !policy.CanView {
 			c.AbortWithStatusJSON(403, "You do not have access to this endpoint.")
 			return
@@ -99,7 +102,11 @@ func CanView() gin.HandlerFunc {
 
 func CanCreate() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		policy := c.Request.Context().Value("policy").(Policy)
+		policyStr, exists := c.Get("policy")
+		if !exists{
+			c.AbortWithStatusJSON(500, "Policy was not loaded.")
+		}
+		policy := policyStr.(Policy)
 
 		if !policy.CanAdd {
 			c.AbortWithStatusJSON(403, "You do not have access to this endpoint.")
@@ -110,7 +117,11 @@ func CanCreate() gin.HandlerFunc {
 
 func CanEdit() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		policy := c.Request.Context().Value("policy").(Policy)
+		policyStr, exists := c.Get("policy")
+		if !exists{
+			c.AbortWithStatusJSON(500, "Policy was not loaded.")
+		}
+		policy := policyStr.(Policy)
 
 		if !policy.CanEdit {
 			c.AbortWithStatusJSON(403, "You do not have access to this endpoint.")
@@ -121,7 +132,11 @@ func CanEdit() gin.HandlerFunc {
 
 func CanDelete() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		policy := c.Request.Context().Value("policy").(Policy)
+		policyStr, exists := c.Get("policy")
+		if !exists{
+			c.AbortWithStatusJSON(500, "Policy was not loaded.")
+		}
+		policy := policyStr.(Policy)
 
 		if !policy.CanDelete {
 			c.AbortWithStatusJSON(403, "You do not have access to this endpoint.")

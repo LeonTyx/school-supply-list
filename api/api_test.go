@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -53,8 +54,16 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 func TestCreateSchool(t *testing.T) {
 	r := createRouter()
 	database.PerformMigrations("file://../database/migrations")
+	school := school{
+		SchoolName:  "Little Test Elementary",
+	}
+	schoolJson, err := json.Marshal(school)
+	if err != nil {
+		fmt.Println("Unable to marshall provides test school into JSON")
+		t.Fail()
+	}
 
-	req, err := http.NewRequest("PUT", "/api/v1/school", nil)
+	req, err := http.NewRequest("PUT", "/api/v1/school", bytes.NewBuffer(schoolJson))
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -68,7 +77,7 @@ func TestCreateSchool(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fail()
 	}
-	var school school
+
 	contents, _ := ioutil.ReadAll(w.Body)
 	err = json.Unmarshal(contents, &school)
 }
