@@ -5,9 +5,10 @@ addons:
     packages:
       - postgresql-12
       - postgresql-client-12
+before_install:
+  - sudo psql -c 'create database school-supply-list;' -U postgres
 before_script:
   - pg_ctlcluster 12 main start
-  - psql -c 'create database school-supply-list;' -U postgres
 env:
   global:
     - DATABASE_URL=postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
