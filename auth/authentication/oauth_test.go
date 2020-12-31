@@ -15,7 +15,7 @@ import (
 
 func createRouter() *gin.Engine {
 	r := gin.Default()
-	err := godotenv.Load("../../projectvars.env")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
