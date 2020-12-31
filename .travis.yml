@@ -12,7 +12,6 @@ before_script:
   - sudo psql -c 'create database "school-supply-list";' -U postgres
 env:
   global:
-    - DATABASE_URL=postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
     - PGPORT=5433
 deploy:
   provider: heroku
