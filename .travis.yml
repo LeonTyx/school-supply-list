@@ -9,7 +9,7 @@ before_install:
   - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
   - sudo pg_ctlcluster 12 main restart
 before_script:
-  - sudo psql -c 'create "database school-supply-list";' -U postgres
+  - sudo psql -c 'create database "school-supply-list";' -U postgres
 env:
   global:
     - DATABASE_URL=postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
