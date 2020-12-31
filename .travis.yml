@@ -6,11 +6,10 @@ addons:
       - postgresql-12
       - postgresql-client-12
 before_install:
-  - sudo psql -c 'create database school-supply-list;' -U postgres
   - sudo cp /etc/postgresql/{9.3,12}/main/pg_hba.conf
   - sudo pg_ctlcluster 12 main restart
 before_script:
-  - pg_ctlcluster 12 main start
+  - sudo psql -c 'create database school-supply-list;' -U postgres
 env:
   global:
     - DATABASE_URL=postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
