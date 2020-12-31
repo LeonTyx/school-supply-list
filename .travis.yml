@@ -6,7 +6,7 @@ addons:
       - postgresql-12
       - postgresql-client-12
 before_install:
-  - sudo cp /etc/postgresql/{9.3,12}/main/pg_hba.conf
+  - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
   - sudo pg_ctlcluster 12 main restart
 before_script:
   - sudo psql -c 'create database school-supply-list;' -U postgres
