@@ -4,11 +4,11 @@ services: postgresql
 before_script:
   - psql -c 'create database school-supply-list;' -U postgres
 addons:
-  postgresql: "12.5"
+  postgresql: "12"
   apt:
     packages:
-      - postgresql-12.5
-      - postgresql-client-12.5
+      - postgresql-12
+      - postgresql-client-12
 env:
   global:
     - DATABASE_URL = postgres://postgres:@localhost:5432/school-supply-list?sslmode=disable
