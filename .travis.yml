@@ -1,4 +1,9 @@
 language: go
+go: 1.15.6
+before_script:
+  - psql -c 'create database school-supply-list;' -U postgres
+addons:
+  postgresql: "12.5"
 deploy:
   provider: heroku
   api_key:
