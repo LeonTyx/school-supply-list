@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"github.com/antonlindstrom/pgstore"
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
@@ -50,9 +53,9 @@ func InitOauthStore() *pgstore.PGStore {
 
 //Check that database is up to date.
 //Will cycle through all changes in db/migrations until the database is up to date
-func PerformMigrations() {
+func PerformMigrations(migrationsFolder string) {
 	m, err := migrate.New(
-		"file://database/migrations",
+		migrationsFolder,
 		os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)

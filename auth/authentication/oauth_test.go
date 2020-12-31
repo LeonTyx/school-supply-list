@@ -16,8 +16,8 @@ import (
 
 func createRouter() *gin.Engine {
 	r := gin.Default()
-	if _, err := os.Stat("projectvars.env"); err == nil {
-		err := godotenv.Load("variables.env")
+	if _, err := os.Stat("../../projectvars.env"); err == nil {
+		err := godotenv.Load("../../projectvars.env")
 		if err != nil {
 			fmt.Println("Error loading environment.env")
 		}
@@ -55,6 +55,8 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 
 func TestProfile(t *testing.T) {
 	r := createRouter()
+	database.PerformMigrations("file://../../database/migrations")
+
 	req, err := http.NewRequest("GET", "/profile", nil)
 
 	if err != nil {

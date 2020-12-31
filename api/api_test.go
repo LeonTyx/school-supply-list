@@ -16,8 +16,8 @@ import (
 
 func createRouter() *gin.Engine {
 	r := gin.Default()
-	if _, err := os.Stat("projectvars.env"); err == nil {
-		err := godotenv.Load("variables.env")
+	if _, err := os.Stat("../projectvars.env"); err == nil {
+		err := godotenv.Load("../projectvars.env")
 		if err != nil {
 			fmt.Println("Error loading environment.env")
 		}
@@ -52,6 +52,8 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 
 func TestCreateSchool(t *testing.T) {
 	r := createRouter()
+	database.PerformMigrations("file://../database/migrations")
+
 	req, err := http.NewRequest("PUT", "/api/v1/school", nil)
 
 	if err != nil {
@@ -64,7 +66,7 @@ func TestCreateSchool(t *testing.T) {
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
-		t.FailNow()
+		t.Fail()
 	}
 	var school school
 	contents, _ := ioutil.ReadAll(w.Body)
@@ -85,7 +87,7 @@ func TestGetSchool(t *testing.T) {
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
-		t.FailNow()
+		t.Fail()
 	}
 	var school school
 	contents, _ := ioutil.ReadAll(w.Body)
@@ -106,7 +108,7 @@ func TestUpdateSchool(t *testing.T) {
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
-		t.FailNow()
+		t.Fail()
 	}
 	var school school
 	contents, _ := ioutil.ReadAll(w.Body)
@@ -127,7 +129,7 @@ func TestDeleteSchool(t *testing.T) {
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
-		t.FailNow()
+		t.Fail()
 	}
 	var school school
 	contents, _ := ioutil.ReadAll(w.Body)
