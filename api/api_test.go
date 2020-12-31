@@ -9,16 +9,21 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"school-supply-list/database"
 	"testing"
 )
 
 func createRouter() *gin.Engine {
 	r := gin.Default()
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Unable to load env file.",err)
+	if _, err := os.Stat("projectvars.env"); err == nil {
+		err := godotenv.Load("variables.env")
+		if err != nil {
+			fmt.Println("Error loading environment.env")
+		}
+		fmt.Println("Current environment:", os.Getenv("ENV"))
 	}
+
 	db := database.InitDBConnection()
 	SStore := database.InitOauthStore()
 
