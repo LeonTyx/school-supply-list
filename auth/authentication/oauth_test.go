@@ -17,7 +17,7 @@ func createRouter() *gin.Engine {
 	r := gin.Default()
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to load env file.",err)
 	}
 	db := database.InitDBConnection()
 	SStore := database.InitOauthStore()
