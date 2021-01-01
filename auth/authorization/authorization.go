@@ -90,7 +90,7 @@ func getPolicy(db *database.DB, googleID string, resource string) (Policy, error
 func CanView() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		policyStr, exists := c.Get("policy")
-		if !exists{
+		if !exists {
 			c.AbortWithStatusJSON(500, "Policy was not loaded.")
 		}
 		policy := policyStr.(Policy)
@@ -104,7 +104,7 @@ func CanView() gin.HandlerFunc {
 func CanCreate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		policyStr, exists := c.Get("policy")
-		if !exists{
+		if !exists {
 			c.AbortWithStatusJSON(500, "Policy was not loaded.")
 		}
 		policy := policyStr.(Policy)
@@ -119,7 +119,7 @@ func CanCreate() gin.HandlerFunc {
 func CanEdit() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		policyStr, exists := c.Get("policy")
-		if !exists{
+		if !exists {
 			c.AbortWithStatusJSON(500, "Policy was not loaded.")
 		}
 		policy := policyStr.(Policy)
@@ -134,7 +134,7 @@ func CanEdit() gin.HandlerFunc {
 func CanDelete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		policyStr, exists := c.Get("policy")
-		if !exists{
+		if !exists {
 			c.AbortWithStatusJSON(500, "Policy was not loaded.")
 		}
 		policy := policyStr.(Policy)

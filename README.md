@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/fueledbyespresso/school-supply-list.svg?branch=master)](https://travis-ci.com/fueledbyespresso/school-supply-list)
+
 # Setup Project
 
 ## Initialize a postgres database

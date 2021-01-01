@@ -20,6 +20,7 @@ import (
 var r *gin.Engine
 var SessionStore *pgstore.PGStore
 var db *sql.DB
+
 func init() {
 	r = gin.Default()
 
@@ -37,22 +38,22 @@ func init() {
 	Routes(r.Group("api/v1"), dbConnection)
 }
 
-func createTestUser(){
+func createTestUser() {
 	row := db.QueryRow(`INSERT INTO account (user_id, google_id, email, name, google_picture, expires_in, access_token)  
 								VALUES ('00000000-0000-11eb-a029-00ff282e905c', '00000000000000', 'testuser@example.com', 
 								'Johnny Test', 'img.png', '2080-12-29 03:56:43.854138' , '0000000') RETURNING user_id`)
 	var id string
 	err := row.Scan(&id)
-	if err != nil{
+	if err != nil {
 		log.Fatal("Unable to create test user to be deleted. Error: ", err)
 	}
 }
 
-func cleanupDatabase(){
+func cleanupDatabase() {
 	row := db.QueryRow(`DELETE from account where user_id=$1 returning user_id`, "00000000-0000-11eb-a029-00ff282e905c")
 	var id string
 	err := row.Scan(&id)
-	if err != nil{
+	if err != nil {
 		log.Fatal("Unable to remove test user. Error: ", err)
 	}
 
@@ -78,19 +79,19 @@ func createDefaultUser(r *http.Request, w *httptest.ResponseRecorder) {
 	}
 }
 
-func addValidRole() int{
+func addValidRole() int {
 	row := db.QueryRow(`INSERT INTO role (role_id, role_name, role_desc) 
 								VALUES (-1, 'test', 'Temporary test role. Delete if present outside of testing.') returning role_id`)
 	var id int
 	err := row.Scan(&id)
-	if err != nil{
+	if err != nil {
 		log.Fatal("Unable to create test role to be deleted. Error: ", err)
 	}
 	row = db.QueryRow(`INSERT INTO role_resource_bridge (can_add, can_view, can_edit, can_delete, resource_id, role_id) 
 								VALUES (true, true, true, true, $1 , $2) returning rrb_id`, 1, id)
 	var rrbID int
 	err = row.Scan(&rrbID)
-	if err != nil{
+	if err != nil {
 		log.Fatal("Unable to add test permissions to be deleted. Error: ", err)
 	}
 
@@ -102,7 +103,7 @@ func addValidRole() int{
 func TestCreateSchool(t *testing.T) {
 	database.PerformMigrations("file://../database/migrations")
 	school := school{
-		SchoolName:  "Little Test Elementary",
+		SchoolName: "Little Test Elementary",
 	}
 	schoolJson, err := json.Marshal(school)
 	if err != nil {
@@ -198,10 +199,10 @@ func TestDeleteSchool(t *testing.T) {
 	row := db.QueryRow("INSERT INTO school (school_name, school_id) VALUES ('Test', default) RETURNING school_id")
 	var id string
 	err := row.Scan(&id)
-	if err != nil{
+	if err != nil {
 		log.Fatal("Unable to create test school to be deleted. Error: ", err)
 	}
-	req, err := http.NewRequest("DELETE", "/api/v1/school/" + id, nil)
+	req, err := http.NewRequest("DELETE", "/api/v1/school/"+id, nil)
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -223,4 +224,3 @@ func TestDeleteSchool(t *testing.T) {
 
 	cleanupDatabase()
 }
-

@@ -5,6 +5,18 @@ import (
 	"school-supply-list/database"
 )
 
+type supplyList struct {
+	ListID    int        `json:"list-id"`
+	ListName  string     `json:"list-name"`
+	ListItems []listItem `json:"list-items"`
+}
+
+type listItem struct {
+	ItemID   int    `json:"item-id"`
+	ItemName string `json:"item-name"`
+	ItemDesc string `json:"item-desc"`
+}
+
 func createSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(200, gin.H{

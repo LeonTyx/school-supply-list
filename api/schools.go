@@ -38,6 +38,7 @@ func getSchool(db *database.DB) gin.HandlerFunc {
 		id, err := strconv.Atoi(idString)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer")
+			return
 		}
 		school := school{
 			SchoolID: id,
@@ -47,6 +48,7 @@ func getSchool(db *database.DB) gin.HandlerFunc {
 											where school.school_id=$1`, id)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
+			return
 		}
 
 		for schoolRows.Next() {
@@ -66,6 +68,7 @@ func getSchools(db *database.DB) gin.HandlerFunc {
 		schoolsRows, err := db.Db.Query(`SELECT school_id, school_name from school`)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
+			return
 		}
 
 		for schoolsRows.Next() {
@@ -83,7 +86,26 @@ func getSchools(db *database.DB) gin.HandlerFunc {
 
 func updateSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(200, c.Request.Body)
+		idString := c.Param("id")
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer")
+			return
+		}
+
+		var school school
+		err = json.NewDecoder(c.Request.Body).Decode(&school)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid request.")
+			return
+		}
+
+		row := db.Db.QueryRow(`UPDATE school SET school_name = $1 WHERE school_id=$2`, school.SchoolName, id)
+		if row.Err() != nil {
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+		c.JSON(200, school.SchoolID)
 	}
 }
 
@@ -93,10 +115,11 @@ func deleteSchool(db *database.DB) gin.HandlerFunc {
 		id, err := strconv.Atoi(idString)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer")
+			return
 		}
 
-		_, err = db.Db.Query(`DELETE from school where school.school_id=$1`, id)
-		if err != nil {
+		row := db.Db.QueryRow(`DELETE from school where school.school_id=$1`, id)
+		if row.Err() != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 		}
 
