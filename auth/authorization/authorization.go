@@ -77,6 +77,7 @@ func getPolicy(db *database.DB, googleID string, resource string) (Policy, error
 		var temp Policy
 		err = policyQuery.Scan(&temp.CanAdd, &temp.CanView,
 			&temp.CanEdit, &temp.CanDelete)
+
 		policy.CanAdd = temp.CanAdd || policy.CanAdd
 		policy.CanDelete = temp.CanDelete || policy.CanDelete
 		policy.CanEdit = temp.CanEdit || policy.CanEdit

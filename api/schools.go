@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/database"
@@ -14,12 +15,20 @@ type school struct {
 
 func createSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id := c.Param("id")
+		var school school
+		err := json.NewDecoder(c.Request.Body).Decode(&school)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid request.")
+			return
+		}
+		row := db.Db.QueryRow(`INSERT INTO school (school_name) VALUES ($1) returning school_id`, school.SchoolName)
+		err = row.Scan(&school.SchoolID)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid school name.")
+			return
+		}
 
-		c.JSON(200, gin.H{
-			"id":   id,
-			"body": c.PostForm("school_name"),
-		})
+		c.JSON(200, school)
 	}
 }
 
