@@ -5,11 +5,30 @@ import {userSession} from "../UserSession";
 export default function LoginButton() {
     const [user, setUser] = useContext(userSession)
 
+    function logout(){
+        setUser(null)
+        localStorage.removeItem('user')
+    }
+
+    function login(){
+        fetch("/oauth/v1/login")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    setUser(result);
+                    localStorage.setItem("user", result)
+                }, (error) => {
+                    setUser(null)
+                    localStorage.removeItem("user")
+                }
+            )
+    }
+
     return (
         user == null ? (
-            <button onClick={() => setUser({name: "Johnny Test"})}>Login</button>
+            <a href={"./oauth/v1/login"}>Login</a>
         ) : (
-            <button onClick={() => setUser({name: null})}>Log out</button>
+            <button onClick={() => logout()}>Log out</button>
         )
     );
 

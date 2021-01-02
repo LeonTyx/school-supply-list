@@ -22,7 +22,7 @@ function App() {
                     localStorage.setItem("user", result)
                 }, (error) => {
                     setUser(null)
-                    localStorage.setItem("user", '')
+                    localStorage.removeItem("user")
                     setError(error);
                 }
             )
