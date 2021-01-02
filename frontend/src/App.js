@@ -8,22 +8,35 @@ import {HashRouter, Route} from "react-router-dom"
 function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null)
+
     useEffect(() => {
+        setInterval(refreshSession, 900000)
+        window.addEventListener('storage', () => {
+            setUser(JSON.parse(localStorage.getItem('user')))
+        });
         fetch("/oauth/v1/profile")
             .then(res => res.json())
             .then(
                 (result) => {
                     setUser(result);
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
+                    localStorage.setItem("user", result)
+                }, (error) => {
                     setUser(null)
+                    localStorage.setItem("user", '')
                     setError(error);
                 }
             )
     }, [])
+
+    function refreshSession() {
+        fetch("/oauth/v1/refresh")
+            .then(res => res.json())
+            .then(
+                (error) => {
+                    setError(error);
+                }
+            )
+    }
 
     return (
         <HashRouter>
