@@ -1,12 +1,14 @@
 import React from "react";
-import {userContext} from "./userContext";
+import {userSession} from "./UserSession";
 import Main from "./Main";
+import Header from "./Header/Header";
 
 function App() {
     return (
-        <userContext.Provider value={{user:{name: "hello"}}}>
+        <userSession.Provider value={{user:{name: "Johnny Test"}}}>
+            <Header/>
             <Main />
-        </userContext.Provider>
+        </userSession.Provider>
     );
 }
 

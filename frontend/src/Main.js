@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import {userContext} from './userContext';
+import {userSession} from './UserSession';
 
 function Main() {
-    const user = useContext(userContext)
+    const user = useContext(userSession)
     return (
         <div>{user.user.name}</div>
     );
