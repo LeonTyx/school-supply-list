@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "cd && react-scripts start",
+    "build": "cd && react-scripts build",
+    "test": "cd && react-scripts test",
+    "eject": "cd && react-scripts eject"
+  }
+}
