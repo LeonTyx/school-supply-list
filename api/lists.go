@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/database"
+	"strconv"
 )
 
 type supplyList struct {
@@ -34,6 +35,7 @@ func createSupplyList(db *database.DB) gin.HandlerFunc {
 		err = row.Scan(&list.ListID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
+			return
 		}
 
 		c.JSON(200, list)
@@ -42,33 +44,88 @@ func createSupplyList(db *database.DB) gin.HandlerFunc {
 
 func getSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id := c.Param("id")
-		c.JSON(200, gin.H{
-			"message": id,
-		})
+		idString := c.Param("id")
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
+			return
+		}
+		list := supplyList{
+			ListID: id,
+		}
+
+		row := db.Db.QueryRow(`SELECT grade, list_name, school_id from supply_list 
+											where supply_list.list_id=$1`, id)
+		err = row.Scan(&list.Grade, &list.ListName, &list.SchoolID)
+		if err != nil {
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+
+		c.JSON(200, list)
 	}
 }
 
 func getSupplyLists(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "we did it!",
-		})
+		var lists []supplyList
+		rows, err := db.Db.Query(`SELECT grade, list_name, school_id from supply_list`)
+		if err != nil {
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+		for rows.Next() {
+			var list supplyList
+			err = rows.Scan(&list.Grade, &list.ListName, &list.SchoolID)
+			lists = append(lists, list)
+		}
+		c.JSON(200, lists)
 	}
 }
 
 func updateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "we did it!",
-		})
+		idString := c.Param("id")
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
+			return
+		}
+		var list supplyList
+		err = json.NewDecoder(c.Request.Body).Decode(&list)
+
+		list.ListID = id
+
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid request.")
+			return
+		}
+		row := db.Db.QueryRow(`UPDATE supply_list SET grade=$1, list_name=$2, 
+	   		school_id=$3 where list_id=$4 returning list_id`, list.Grade, list.ListName, list.SchoolID, list.ListID)
+		err = row.Scan(&list.ListID)
+		if err != nil {
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+
+		c.JSON(200, list)
 	}
 }
 
 func deleteSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "we did it!",
-		})
+		idString := c.Param("id")
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
+			return
+		}
+		row := db.Db.QueryRow(`DELETE FROM supply_list where list_id=$1`, id)
+		if row.Err() != nil{
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+
+		c.JSON(200, nil)
 	}
 }
