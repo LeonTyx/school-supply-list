@@ -6,10 +6,10 @@ export default function LoginButton() {
     const [user, setUser] = useContext(userSession)
 
     return (
-        user.name == null ? (
-            <button onClick={() => setUser({name:"Johnny Test"})}>Login</button>
-        ):(
-            <button onClick={() => setUser({name:null})}>Log out</button>
+        user == null ? (
+            <button onClick={() => setUser({name: "Johnny Test"})}>Login</button>
+        ) : (
+            <button onClick={() => setUser({name: null})}>Log out</button>
         )
     );
 
