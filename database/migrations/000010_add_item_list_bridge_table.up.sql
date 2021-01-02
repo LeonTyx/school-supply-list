@@ -1,10 +1,10 @@
 create table if not exists item_list_bridge
 (
-    ilb_id serial not null,
-    list_id int not null
+    ilb_id  serial not null,
+    list_id int    not null
         constraint item_list_bridge_supply_list_list_id_fk
             references supply_list,
-    item_id int not null
+    item_id int    not null
         constraint item_list_bridge_supply_item_id_fk
             references supply_item,
     constraint item_list_bridge_pk_2

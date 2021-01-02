@@ -175,6 +175,13 @@ func TestGetSchool(t *testing.T) {
 }
 
 func TestUpdateSchool(t *testing.T) {
+	row := db.QueryRow("INSERT INTO school (school_name, school_id) VALUES ('Test', default) RETURNING school_id")
+	var id string
+	err := row.Scan(&id)
+	if err != nil {
+		log.Fatal("Unable to create test school to be updated. Error: ", err)
+	}
+
 	req, err := http.NewRequest("PUT", "/api/v1/school/1", nil)
 
 	if err != nil {
