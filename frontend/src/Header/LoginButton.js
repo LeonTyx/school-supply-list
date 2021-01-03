@@ -6,17 +6,12 @@ export default function LoginButton() {
     const [user, setUser] = useContext(userSession)
 
     function logout(){
-        setUser(null)
-        localStorage.removeItem('user')
-    }
-
-    function login(){
-        fetch("/oauth/v1/login")
+        fetch("/oauth/v1/logout")
             .then(res => res.json())
             .then(
-                (result) => {
-                    setUser(result);
-                    localStorage.setItem("user", result)
+                () => {
+                    setUser(null);
+                    localStorage.removeItem("user")
                 }, (error) => {
                     setUser(null)
                     localStorage.removeItem("user")

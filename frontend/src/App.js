@@ -12,14 +12,19 @@ function App() {
     useEffect(() => {
         setInterval(refreshSession, 900000)
         window.addEventListener('storage', () => {
-            setUser(JSON.parse(localStorage.getItem('user')))
+            setUser(JSON.parse(localStorage.getItem("user")))
         });
+
         fetch("/oauth/v1/profile")
-            .then(res => res.json())
+            .then((res) => {
+                if(res.ok){
+                    return res.json()
+                }
+            })
             .then(
                 (result) => {
                     setUser(result);
-                    localStorage.setItem("user", result)
+                    localStorage.setItem("user", JSON.stringify(result))
                 }, (error) => {
                     setUser(null)
                     localStorage.removeItem("user")
@@ -51,5 +56,23 @@ function App() {
     );
 }
 
+function cookieExists(name) {
+    let end;
+    const dc = document.cookie;
+    const prefix = name + "=";
+    let begin = dc.indexOf("; " + prefix);
+    if (begin === -1) {
+        begin = dc.indexOf(prefix);
+        if (begin !== 0) return null;
+    } else {
+        begin += 2;
+        end = document.cookie.indexOf(";", begin);
+        if (end === -1) {
+            end = dc.length;
+        }
+    }
+
+    return decodeURI(dc.substring(begin + prefix.length, end)) != null;
+}
 
 export default App
