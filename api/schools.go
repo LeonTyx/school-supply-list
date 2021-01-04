@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/database"
@@ -16,7 +15,7 @@ type school struct {
 func createSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var school school
-		err := json.NewDecoder(c.Request.Body).Decode(&school)
+		err := c.BindJSON(&school)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
@@ -94,7 +93,7 @@ func updateSchool(db *database.DB) gin.HandlerFunc {
 		}
 
 		var school school
-		err = json.NewDecoder(c.Request.Body).Decode(&school)
+		err = c.BindJSON(&school)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return

@@ -129,6 +129,20 @@ func TestCreateSchool(t *testing.T) {
 
 	contents, _ := ioutil.ReadAll(w.Body)
 	err = json.Unmarshal(contents, &school)
+
+	rowCount := db.QueryRow("SELECT count(*) from school WHERE school_id=$1", school.SchoolID)
+	var count int
+	err = rowCount.Scan(&count)
+	if err != nil{
+		t.Fail()
+	}
+
+	if count == 0 {
+		fmt.Println("School is still present in database")
+		t.Fail()
+	}
+
+	db.QueryRow("DELETE from school where school_id=$1", school.SchoolID)
 	cleanupDatabase()
 }
 
@@ -142,6 +156,7 @@ func TestGetSchools(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	createDefaultUser(req, w)
+	addValidRole()
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -163,6 +178,7 @@ func TestGetSchool(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	createDefaultUser(req, w)
+	addValidRole()
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -181,8 +197,16 @@ func TestUpdateSchool(t *testing.T) {
 	if err != nil {
 		log.Fatal("Unable to create test school to be updated. Error: ", err)
 	}
+	school := school{
+		SchoolName: "New Little Test Elementary",
+	}
+	schoolJson, err := json.Marshal(school)
+	if err != nil {
+		fmt.Println("Unable to marshall provides test school into JSON")
+		t.Fail()
+	}
 
-	req, err := http.NewRequest("PUT", "/api/v1/school/1", nil)
+	req, err := http.NewRequest("POST", "/api/v1/school/"+id, bytes.NewBuffer(schoolJson))
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -191,14 +215,14 @@ func TestUpdateSchool(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	createDefaultUser(req, w)
+	addValidRole()
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
 		t.Fail()
 	}
-	var school school
-	contents, _ := ioutil.ReadAll(w.Body)
-	err = json.Unmarshal(contents, &school)
+
+	db.QueryRow("DELETE from school where school_id=$1", id)
 	cleanupDatabase()
 }
 
@@ -218,16 +242,24 @@ func TestDeleteSchool(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	createDefaultUser(req, w)
+	addValidRole()
 
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
 		t.Fail()
 	}
-	var school school
-	contents, _ := ioutil.ReadAll(w.Body)
-	err = json.Unmarshal(contents, &school)
 
-	db.QueryRow("delete from school where school_id = $1", id)
+	rowCount := db.QueryRow("SELECT count(*) from school WHERE school_id=$1", id)
+	var count int
+	err = rowCount.Scan(&count)
+	if err != nil{
+		t.Fail()
+	}
+
+	if count > 0 {
+		fmt.Println("School is still present in database")
+		t.Fail()
+	}
 
 	cleanupDatabase()
 }
