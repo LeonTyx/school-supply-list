@@ -55,7 +55,7 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 	r.GET("/login", handleGoogleLogin(db))
 	r.GET("/callback", handleGoogleCallback(db))
 	r.GET("/logout", handleGoogleLogout(db))
-	r.GET("/profile", getProfile(db))
+	r.GET("/account", getAccount(db))
 	r.GET("/refresh", refreshSession(db))
 }
 
@@ -251,7 +251,7 @@ func handleGoogleLogout(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-type Profile struct {
+type Account struct {
 	Email   string               `json:"email"`
 	Name    string               `json:"name"`
 	Picture string               `json:"picture"`
@@ -282,7 +282,7 @@ func refreshSession(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getProfile(db *database.DB) gin.HandlerFunc {
+func getAccount(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := db.SessionStore.Get(c.Request, "session")
 		if err != nil {
@@ -308,7 +308,7 @@ func getProfile(db *database.DB) gin.HandlerFunc {
 				return
 			}
 
-			userData := Profile{EmailStr, NameStr, PictureUrlStr, role, userID}
+			userData := Account{EmailStr, NameStr, PictureUrlStr, role, userID}
 
 			c.JSON(200, userData)
 		} else {

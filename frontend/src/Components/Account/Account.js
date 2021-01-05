@@ -1,8 +1,8 @@
-import './Profile.scss'
+import './Account.scss'
 import {useContext} from "react";
 import {userSession} from "../../UserSession";
 
-function Profile() {
+function Account() {
     const [user] = useContext(userSession)
 
     return (
@@ -15,4 +15,4 @@ function Profile() {
 
 }
 
-export default Profile;
+export default Account;

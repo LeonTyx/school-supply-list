@@ -4,7 +4,7 @@ import Header from "./Components/Header/Header";
 import Home from "./Components/Home/Home";
 import {HashRouter, Route} from "react-router-dom"
 import SupplyList from "./Components/Supply List/SupplyList";
-import Profile from "./Components/Profile/Profile";
+import Account from "./Components/Account/Account";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -57,7 +57,7 @@ function App() {
                     <Route exact path="/" component={Home}/>
                     <Route path="/list/:id" component={SupplyList}/>
                     {user !== null && (
-                        <Route exact path="/profile" component={Profile}/>
+                        <Route exact path="/account" component={Account}/>
                     )}
                 </main>
             </userSession.Provider>

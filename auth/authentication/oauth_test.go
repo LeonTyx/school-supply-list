@@ -30,7 +30,7 @@ func createRouter() *gin.Engine {
 	r.GET("/login", handleGoogleLogin(dbConnection))
 	r.GET("/callback", handleGoogleCallback(dbConnection))
 	r.GET("/logout", handleGoogleLogout(dbConnection))
-	r.GET("/profile", getProfile(dbConnection))
+	r.GET("/profile", getAccount(dbConnection))
 	r.GET("/refresh", refreshSession(dbConnection))
 
 	return r
@@ -53,11 +53,11 @@ func createSession(r *http.Request, w *httptest.ResponseRecorder, db *database.D
 	}
 }
 
-func TestProfile(t *testing.T) {
+func TestAccount(t *testing.T) {
 	r := createRouter()
 	database.PerformMigrations("file://../../database/migrations")
 
-	req, err := http.NewRequest("GET", "/profile", nil)
+	req, err := http.NewRequest("GET", "/account", nil)
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -71,12 +71,12 @@ func TestProfile(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.FailNow()
 	}
-	var profile Profile
+	var account Account
 	contents, _ := ioutil.ReadAll(w.Body)
-	err = json.Unmarshal(contents, &profile)
+	err = json.Unmarshal(contents, &account)
 
-	fmt.Println("email: ", profile.Email)
-	fmt.Println("Name: ", profile.Name)
-	fmt.Println("Profile picture URL: ", profile.Picture)
-	fmt.Println("UUID: ", profile.ID)
+	fmt.Println("email: ", account.Email)
+	fmt.Println("Name: ", account.Name)
+	fmt.Println("Account picture URL: ", account.Picture)
+	fmt.Println("UUID: ", account.ID)
 }

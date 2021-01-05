@@ -1,10 +1,10 @@
 import React from 'react';
 import './SchoolCard.scss'
 
-function SchoolCard() {
+function SchoolCard(props) {
     return (
-        <div>
-            <h3></h3>
+        <div className="school-card">
+            <h3>{props.school.name}</h3>
         </div>
     );
 

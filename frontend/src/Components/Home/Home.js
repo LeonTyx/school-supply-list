@@ -1,5 +1,6 @@
 import './Home.scss'
 import {useEffect, useState} from "react";
+import SchoolCard from "./SchoolCard";
 
 function Home() {
     const [schools, setSchools] = useState(null);
@@ -25,9 +26,9 @@ function Home() {
 
     return (
         error === null && schools !== null &&
-        <div>
+        <div className="home">
             {schools.map((school) =>
-                <div>{school.name}</div>
+                <SchoolCard school={school}/>
             )}
         </div>
     );
