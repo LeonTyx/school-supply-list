@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import './LoginButton.scss'
-import {userSession} from "../UserSession";
+import {userSession} from "../../UserSession";
 
 export default function LoginButton() {
     const [user, setUser] = useContext(userSession)
