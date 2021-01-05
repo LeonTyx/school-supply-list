@@ -30,7 +30,7 @@ func createRouter() *gin.Engine {
 	r.GET("/login", handleGoogleLogin(dbConnection))
 	r.GET("/callback", handleGoogleCallback(dbConnection))
 	r.GET("/logout", handleGoogleLogout(dbConnection))
-	r.GET("/profile", getAccount(dbConnection))
+	r.GET("/account", getAccount(dbConnection))
 	r.GET("/refresh", refreshSession(dbConnection))
 
 	return r
