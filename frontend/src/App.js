@@ -56,7 +56,7 @@ function App() {
                 <main>
                     <Route exact path="/" component={Home}/>
                     <Route path="/list/:id" component={SupplyList}/>
-                    {user !== null && (
+                    {user !== null  && user !== undefined && (
                         <Route exact path="/account" component={Account}/>
                     )}
                 </main>

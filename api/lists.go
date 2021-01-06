@@ -14,6 +14,7 @@ type supplyList struct {
 	SchoolID  int        `json:"school_id"`
 	ListName  string     `json:"list-name"`
 	ListItems []listItem `json:"list-items"`
+	Published bool       `json:"published"`
 }
 
 type listItem struct {
@@ -30,8 +31,8 @@ func createSupplyList(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
 		}
-		row := db.Db.QueryRow(`INSERT INTO supply_list (grade, list_name, school_id, list_id) 
-		  VALUES ($1, $2, $3, default) returning list_id`, list.Grade, list.ListName, list.ListID)
+		row := db.Db.QueryRow(`INSERT INTO supply_list (grade, list_name, school_id, published, list_id) 
+		  VALUES ($1, $2, $3, $4, default) returning list_id`, list.Grade, list.ListName, list.ListID, list.Published)
 		err = row.Scan(&list.ListID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
@@ -54,7 +55,7 @@ func getSupplyList(db *database.DB) gin.HandlerFunc {
 			ListID: id,
 		}
 
-		row := db.Db.QueryRow(`SELECT grade, list_name, school_id from supply_list 
+		row := db.Db.QueryRow(`SELECT grade, list_name, published, school_id from supply_list 
 											where supply_list.list_id=$1`, id)
 		err = row.Scan(&list.Grade, &list.ListName, &list.SchoolID)
 		if err != nil {
@@ -100,8 +101,8 @@ func updateSupplyList(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
 		}
-		row := db.Db.QueryRow(`UPDATE supply_list SET grade=$1, list_name=$2, 
-	   		school_id=$3 where list_id=$4 returning list_id`, list.Grade, list.ListName, list.SchoolID, list.ListID)
+		row := db.Db.QueryRow(`UPDATE supply_list SET grade=$1, list_name=$2, published=$3, 
+	   		school_id=$4 where list_id=$5 returning list_id`, list.Grade, list.ListName, list.Published, list.SchoolID, list.ListID)
 		err = row.Scan(&list.ListID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)

@@ -1,0 +1,79 @@
+#menu-button {
+  padding:.2rem .5rem;
+  margin:0 .5rem;
+  appearance: none;
+  background: #e5e9f0;
+  outline: none;
+  border: 1px solid #ddd;
+  border-radius: .3rem;
+  overflow: hidden;
+  font-size:1rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease 0.05s;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background: #fafafa;
+  }
+  &:focus {
+    background: #eee;
+  }
+  span {
+    flex-grow: 1;
+    text-align: center;
+    padding:0 .5rem;
+  }
+
+  img{
+    width:2rem;
+    height:2rem;
+    border-radius: 5rem;
+  }
+}
+
+#menu {
+  box-sizing: border-box;
+  background: #fff;
+  right:0;
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.1s ease, opacity 0.1s ease, visibility 0s linear 0.1s;
+  will-change: transform;
+  text-align: left;
+  position: absolute;
+  width: fit-content;
+
+
+  &.visible {
+    transition: opacity 0.1s ease, visibility 0s linear 0s;
+    visibility: visible;
+    opacity: 1;
+  }
+
+  a {
+    display: block;
+    box-sizing: border-box;
+    font-size: 1.1rem;
+    padding: 1.2rem;
+    color: #29779e;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+    border: 0.1rem solid transparent;
+    border-radius: 0.2rem;
+  }
+
+  a:hover {
+    background: #29779e;
+    color:#fff;
+    text-decoration: underline;
+  }
+
+  a:focus {
+    border-color: #3a8eb8;
+  }
+}

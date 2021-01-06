@@ -1,0 +1,18 @@
+header{
+  display:flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  height:3em;
+  background: #fff;
+  align-items: center;
+
+  a.site-name{
+    color:#000;
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 0 1rem;
+    &:visited{
+      text-decoration: none;
+    }
+  }
+}
