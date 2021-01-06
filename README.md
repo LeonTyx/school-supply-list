@@ -26,7 +26,7 @@ and secret in the ``credentials`` tab Populate the projectvars.env file with you
 
 ## Add Database Changes 
 
-``migrate create -ext sql -dir database/migrations -seq migration_name``
+``migrate create -ext sql -dir database/migrations -seq <MIGRATION_NAME>``
 
 ## Development environment
 ### Frontend
