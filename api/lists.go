@@ -56,9 +56,30 @@ func getSupplyList(db *database.DB) gin.HandlerFunc {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
+		list.ListItems, err = getItemsForList(list.ListID, db)
+		if err != nil{
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
 
 		c.JSON(200, list)
 	}
+}
+
+func getItemsForList(id int, db *database.DB) ([]supplyItem, error) {
+	var supplies []supplyItem
+	rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc, ilb.category FROM supply_item sup 
+										INNER JOIN item_list_bridge ilb on sup.id = ilb.item_id
+										WHERE ilb.list_id = $1`, id)
+	if err != nil{
+		return supplies, err
+	}
+	for rows.Next() {
+		var supply supplyItem
+		err = rows.Scan(&supply.Id, &supply.Supply, &supply.Desc, &supply.Category)
+		supplies = append(supplies, supply)
+	}
+	return supplies, nil
 }
 
 func getSupplyLists(db *database.DB) gin.HandlerFunc {
