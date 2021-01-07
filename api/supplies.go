@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
@@ -12,7 +13,7 @@ type supplyItem struct {
 	Id       int    `json:"item_id"`
 	Supply   string `json:"item_name"`
 	Desc     string `json:"item_desc"`
-	Category string `json:"item_category"`
+	Category sql.NullString `json:"item_category"`
 }
 
 func createSupply(db *database.DB) gin.HandlerFunc {

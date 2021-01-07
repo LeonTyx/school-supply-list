@@ -9,12 +9,13 @@ import (
 )
 
 type supplyList struct {
-	ListID    int          `json:"list_id"`
-	Grade     int          `json:"grade"`
-	SchoolID  int          `json:"school_id"`
-	ListName  string       `json:"list_name"`
-	ListItems []supplyItem `json:"list_items"`
-	Published bool         `json:"published"`
+	ListID              int                     `json:"list_id"`
+	Grade               int                     `json:"grade"`
+	SchoolID            int                     `json:"school_id"`
+	ListName            string                  `json:"list_name"`
+	BasicSupplies       []supplyItem            `json:"basic_supplies"`
+	CategorizedSupplies map[string][]supplyItem `json:"categorized_supplies"`
+	Published           bool                    `json:"published"`
 }
 
 func createSupplyList(db *database.DB) gin.HandlerFunc {
@@ -56,8 +57,8 @@ func getSupplyList(db *database.DB) gin.HandlerFunc {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
-		list.ListItems, err = getItemsForList(list.ListID, db)
-		if err != nil{
+		list.BasicSupplies, list.CategorizedSupplies,err = getItemsForList(list.ListID, db)
+		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
@@ -66,20 +67,31 @@ func getSupplyList(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getItemsForList(id int, db *database.DB) ([]supplyItem, error) {
-	var supplies []supplyItem
+func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supplyItem, error) {
+	var basicSupplies []supplyItem
+	categorizedSupplies := make(map[string][]supplyItem)
 	rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc, ilb.category FROM supply_item sup 
 										INNER JOIN item_list_bridge ilb on sup.id = ilb.item_id
 										WHERE ilb.list_id = $1`, id)
-	if err != nil{
-		return supplies, err
+	if err != nil {
+		return basicSupplies, categorizedSupplies, err
 	}
 	for rows.Next() {
 		var supply supplyItem
+
 		err = rows.Scan(&supply.Id, &supply.Supply, &supply.Desc, &supply.Category)
-		supplies = append(supplies, supply)
+		basicSupplies = append(basicSupplies, supply)
+		if supply.Category.Valid {
+			if val, ok := categorizedSupplies[supply.Category.String]; ok {
+				val = append(val, supply)
+			}else{
+				categorizedSupplies[supply.Category.String] = []supplyItem{supply}
+			}
+		}else{
+			basicSupplies = append(basicSupplies, supply)
+		}
 	}
-	return supplies, nil
+	return basicSupplies, categorizedSupplies,nil
 }
 
 func getSupplyLists(db *database.DB) gin.HandlerFunc {
