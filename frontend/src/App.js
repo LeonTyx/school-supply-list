@@ -40,12 +40,11 @@ function App() {
 
     function refreshSession() {
         fetch("/oauth/v1/refresh")
-            .then(res => res.json())
-            .then(
-                (error) => {
-                    setError(error);
+            .then((res) => {
+                if(!res.ok){
+                    setError("Unable to refresh session")
                 }
-            )
+            })
     }
 
     return (

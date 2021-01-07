@@ -9,6 +9,7 @@ import (
 //All the routes created by the package nested in
 // api/v1/*
 func Routes(r *gin.RouterGroup, db *database.DB) {
+	//School
 	r.PUT("/school", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "school"),
 		authorization.CanCreate(),
@@ -26,6 +27,7 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 		authorization.CanDelete(),
 		deleteSchool(db))
 
+	//Supply-list
 	r.PUT("/supply-list", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanCreate(),
@@ -42,4 +44,26 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanDelete(),
 		deleteSupplyList(db))
+
+	//Supply Item
+	r.PUT("/supply", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanCreate(),
+		createSupply(db))
+	r.GET("/supply/:id",
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanView(),
+		getSupply(db))
+	r.GET("/supply",
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanView(),
+		getAllSupplies(db))
+	r.POST("/supply/:id", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanEdit(),
+		updateSupply(db))
+	r.DELETE("/supply/:id", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanDelete(),
+		deleteSupply(db))
 }

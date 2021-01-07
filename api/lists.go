@@ -9,18 +9,12 @@ import (
 )
 
 type supplyList struct {
-	ListID    int        `json:"list-id"`
-	Grade     int        `json:"grade"`
-	SchoolID  int        `json:"school_id"`
-	ListName  string     `json:"list-name"`
-	ListItems []listItem `json:"list-items"`
-	Published bool       `json:"published"`
-}
-
-type listItem struct {
-	ItemID   int    `json:"item-id"`
-	ItemName string `json:"item-name"`
-	ItemDesc string `json:"item-desc"`
+	ListID    int          `json:"list-id"`
+	Grade     int          `json:"grade"`
+	SchoolID  int          `json:"school_id"`
+	ListName  string       `json:"list-name"`
+	ListItems []supplyItem `json:"list-items"`
+	Published bool         `json:"published"`
 }
 
 func createSupplyList(db *database.DB) gin.HandlerFunc {
