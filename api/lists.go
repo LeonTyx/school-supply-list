@@ -9,11 +9,11 @@ import (
 )
 
 type supplyList struct {
-	ListID    int          `json:"list-id"`
+	ListID    int          `json:"list_id"`
 	Grade     int          `json:"grade"`
 	SchoolID  int          `json:"school_id"`
-	ListName  string       `json:"list-name"`
-	ListItems []supplyItem `json:"list-items"`
+	ListName  string       `json:"list_name"`
+	ListItems []supplyItem `json:"list_items"`
 	Published bool         `json:"published"`
 }
 
