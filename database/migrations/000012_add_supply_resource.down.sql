@@ -1,1 +1,3 @@
-DELETE FROM resource WHERE resource_id=3;
+DELETE
+FROM resource
+WHERE resource_id = 3;

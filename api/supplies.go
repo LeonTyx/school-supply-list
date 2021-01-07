@@ -11,7 +11,8 @@ import (
 type supplyItem struct {
 	Id       int    `json:"item_id"`
 	Supply   string `json:"item_name"`
-	Desc string `json:"item_desc"`
+	Desc     string `json:"item_desc"`
+	Category string `json:"item_category"`
 }
 
 func createSupply(db *database.DB) gin.HandlerFunc {
@@ -114,7 +115,7 @@ func deleteSupply(db *database.DB) gin.HandlerFunc {
 			return
 		}
 		row := db.Db.QueryRow(`DELETE FROM supply_item where id=$1`, id)
-		if row.Err() != nil{
+		if row.Err() != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}

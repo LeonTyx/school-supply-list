@@ -10,7 +10,7 @@ function Home() {
         //Fetch user from api
         fetch("/api/v1/schools")
             .then((res) => {
-                if(res.ok){
+                if (res.ok) {
                     return res.json()
                 }
             })

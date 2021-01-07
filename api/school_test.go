@@ -133,7 +133,7 @@ func TestCreateSchool(t *testing.T) {
 	rowCount := db.QueryRow("SELECT count(*) from school WHERE school_id=$1", school.SchoolID)
 	var count int
 	err = rowCount.Scan(&count)
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 
@@ -252,7 +252,7 @@ func TestDeleteSchool(t *testing.T) {
 	rowCount := db.QueryRow("SELECT count(*) from school WHERE school_id=$1", id)
 	var count int
 	err = rowCount.Scan(&count)
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 

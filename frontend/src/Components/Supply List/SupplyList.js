@@ -10,7 +10,7 @@ function SupplyList() {
         //Fetch user from api
         fetch("/oauth/v1/supply-list")
             .then((res) => {
-                if(res.ok){
+                if (res.ok) {
                     return res.json()
                 }
             })

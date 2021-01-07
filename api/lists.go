@@ -116,7 +116,7 @@ func deleteSupplyList(db *database.DB) gin.HandlerFunc {
 			return
 		}
 		row := db.Db.QueryRow(`DELETE FROM supply_list where list_id=$1`, id)
-		if row.Err() != nil{
+		if row.Err() != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}

@@ -22,7 +22,7 @@ function App() {
         //Fetch user from api
         fetch("/oauth/v1/profile")
             .then((res) => {
-                if(res.ok){
+                if (res.ok) {
                     return res.json()
                 }
             })
@@ -41,7 +41,7 @@ function App() {
     function refreshSession() {
         fetch("/oauth/v1/refresh")
             .then((res) => {
-                if(!res.ok){
+                if (!res.ok) {
                     setError("Unable to refresh session")
                 }
             })
@@ -55,7 +55,7 @@ function App() {
                 <main>
                     <Route exact path="/" component={Home}/>
                     <Route path="/list/:id" component={SupplyList}/>
-                    {user !== null  && user !== undefined && (
+                    {user !== null && user !== undefined && (
                         <Route exact path="/account" component={Account}/>
                     )}
                 </main>

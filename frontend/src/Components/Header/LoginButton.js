@@ -6,9 +6,9 @@ import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
 export default function LoginButton() {
     const [user, setUser] = useContext(userSession)
-    const { buttonProps, itemProps, isOpen } = useDropdownMenu(3);
+    const {buttonProps, itemProps, isOpen} = useDropdownMenu(3);
 
-    function logout(){
+    function logout() {
         fetch("/oauth/v1/logout")
             .then(res => res.json())
             .then(
@@ -30,7 +30,7 @@ export default function LoginButton() {
                 <button {...buttonProps} type='button' id='menu-button'>
                     <img src={user.picture} alt="profile"/>
                     <span>Account</span>
-                    <i className='fal fa-angle-down' />
+                    <i className='fal fa-angle-down'/>
                 </button>
 
                 <div className={isOpen ? 'visible' : ''} role='menu' id='menu'>
@@ -38,7 +38,7 @@ export default function LoginButton() {
                         View Account
                     </Link>
 
-                    <a {...itemProps[1]} onClick={()=>logout()} id='menu-item-2'>
+                    <a {...itemProps[1]} onClick={() => logout()} id='menu-item-2'>
                         Log Out
                     </a>
                 </div>
