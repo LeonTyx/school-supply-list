@@ -326,8 +326,8 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 func consolidateRoles(roles []authorization.Role) authorization.Role {
 	var consolidatedRole authorization.Role
 	for _, role := range roles {
-		for _, resource := range role.Resources {
-			fmt.Println(resource)
+		for resource, resourceDetails := range role.Resources {
+			consolidatedRole.Resources[resource] = resourceDetails
 		}
 	}
 
@@ -360,8 +360,8 @@ func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]a
 	return roles, nil
 }
 
-func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]authorization.Resource, error) {
-	var resources []authorization.Resource
+func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) (map[string]authorization.Resource, error) {
+	resources := make(map[string]authorization.Resource)
 	resourcesRows, err := db.Db.Query(`SELECT resc.resource_id, resc.resource_name,rrb.can_add,
 						rrb.can_delete, rrb.can_edit, rrb.can_view from resource resc
 						INNER JOIN role_resource_bridge rrb on resc.resource_id = rrb.resource_id
@@ -373,12 +373,13 @@ func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) ([]auth
 
 	for resourcesRows.Next() {
 		var resource authorization.Resource
-		err := resourcesRows.Scan(&resource.ResourceID, &resource.Resource, &resource.Policy.CanAdd, &resource.Policy.CanDelete,
+		var resourceName string
+		err := resourcesRows.Scan(&resource.ResourceID, &resourceName, &resource.Policy.CanAdd, &resource.Policy.CanDelete,
 			&resource.Policy.CanEdit, &resource.Policy.CanView)
 		if err != nil {
 			c.AbortWithStatusJSON(500, "The server was unable to retrieve permission")
 		}
-		resources = append(resources, resource)
+		resources[resourceName] = resource
 	}
 	_ = resourcesRows.Close()
 

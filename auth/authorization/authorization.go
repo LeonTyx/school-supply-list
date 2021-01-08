@@ -9,7 +9,6 @@ import (
 
 type Resource struct {
 	ResourceID int    `json:"id"`
-	Resource   string `json:"resource"`
 	Policy     Policy `json:"policy"`
 }
 
@@ -24,7 +23,7 @@ type Role struct {
 	ID        string     `json:"id"`
 	Name      string     `json:"name"`
 	Desc      string     `json:"desc"`
-	Resources []Resource `json:"resources"`
+	Resources map[string]Resource `json:"resources"`
 }
 
 func ValidSession(db *database.DB) gin.HandlerFunc {

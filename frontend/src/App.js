@@ -20,7 +20,7 @@ function App() {
         });
 
         //Fetch user from api
-        fetch("/oauth/v1/profile")
+        fetch("/oauth/v1/account")
             .then((res) => {
                 if (res.ok) {
                     return res.json()
@@ -29,6 +29,7 @@ function App() {
             .then(
                 (result) => {
                     setUser(result);
+                    console.log(user)
                     localStorage.setItem("user", JSON.stringify(result))
                 }, (error) => {
                     setUser(null)
