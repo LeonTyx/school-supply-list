@@ -81,7 +81,10 @@ func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supply
 
 		err = rows.Scan(&supply.Id, &supply.Supply, &supply.Desc, &supply.Category)
 		basicSupplies = append(basicSupplies, supply)
+
+		// Check if item is categorized
 		if supply.Category.Valid {
+			// Either create a new map item or add to existing item
 			if val, ok := categorizedSupplies[supply.Category.String]; ok {
 				val = append(val, supply)
 			}else{
@@ -91,7 +94,7 @@ func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supply
 			basicSupplies = append(basicSupplies, supply)
 		}
 	}
-	return basicSupplies, categorizedSupplies,nil
+	return basicSupplies, categorizedSupplies, nil
 }
 
 func getSupplyLists(db *database.DB) gin.HandlerFunc {

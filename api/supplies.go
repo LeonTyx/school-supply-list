@@ -10,9 +10,9 @@ import (
 )
 
 type supplyItem struct {
-	Id       int    `json:"item_id"`
-	Supply   string `json:"item_name"`
-	Desc     string `json:"item_desc"`
+	Id       int    `json:"id"`
+	Supply   string `json:"supply"`
+	Desc     string `json:"desc"`
 	Category sql.NullString `json:"item_category"`
 }
 

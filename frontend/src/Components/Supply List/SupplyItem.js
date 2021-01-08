@@ -4,7 +4,7 @@ import './SupplyItem.scss'
 function SupplyItem(props) {
     return (
         <div>
-            {props.list.item_name}
+            {props.list.supply}
         </div>
     );
 
