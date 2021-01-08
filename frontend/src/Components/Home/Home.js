@@ -1,9 +1,11 @@
 import './Home.scss'
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import SchoolCard from "./SchoolCard";
+import {userSession} from "../../UserSession";
 
 function Home() {
     const [schools, setSchools] = useState(null);
+    const [user] = useContext(userSession);
     const [error, setError] = useState(null)
 
     useEffect(() => {
@@ -27,9 +29,21 @@ function Home() {
     return (
         error === null && schools !== null &&
         <div className="home">
-            {schools.map((school) =>
-                <SchoolCard school={school}/>
-            )}
+            <section className="schools">
+                {schools.map((school) =>
+                    <SchoolCard school={school}/>
+                )}
+            </section>
+
+            {user != null &&
+                user.roles.consolidated_roles.resources.schools.policy.can_add && (
+                    <div>
+                        Create School
+                        <input placeholder="name"/>
+                        <button>Create</button>
+                    </div>
+                )
+            }
         </div>
     );
 

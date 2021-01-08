@@ -256,6 +256,7 @@ type Account struct {
 	Name    string               `json:"name"`
 	Picture string               `json:"picture"`
 	Roles   []authorization.Role `json:"roles"`
+	ConsolidatedRoles authorization.Role `json:"consolidated_roles"`
 	ID      string               `json:"user_id"`
 }
 
@@ -300,15 +301,20 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 			PictureUrlStr := fmt.Sprintf("%v", PictureUrl)
 			GoogleID := session.Values["GoogleId"]
 			GoogleIDStr := fmt.Sprintf("%v", GoogleID)
-			role, err := getRolesFromGoogleID(c, db, GoogleIDStr)
-			userID, err := getUUIDFromGoogleID(db, GoogleIDStr)
-
+			roles, err := getRolesFromGoogleID(c, db, GoogleIDStr)
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
+			userID, err := getUUIDFromGoogleID(db, GoogleIDStr)
+			if err != nil {
+				database.CheckDBErr(err.(*pq.Error), c)
+				return
+			}
+            consolidatedRoles := consolidateRoles(roles)
 
-			userData := Account{EmailStr, NameStr, PictureUrlStr, role, userID}
+			//TODO actually consolidate roles
+			userData := Account{EmailStr, NameStr, PictureUrlStr, roles, consolidatedRoles,userID}
 
 			c.JSON(200, userData)
 		} else {
@@ -316,6 +322,18 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 		}
 	}
 }
+
+func consolidateRoles(roles []authorization.Role) authorization.Role {
+	var consolidatedRole authorization.Role
+	for _, role := range roles {
+		for _, resource := range role.Resources {
+			fmt.Println(resource)
+		}
+	}
+
+	return consolidatedRole
+}
+
 func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, error) {
 	var roles []authorization.Role
 	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc from role 
