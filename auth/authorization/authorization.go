@@ -20,7 +20,7 @@ type Policy struct {
 }
 
 type Role struct {
-	ID        string     `json:"id"`
+	ID        int     `json:"id"`
 	Name      string     `json:"name"`
 	Desc      string     `json:"desc"`
 	Resources map[string]Resource `json:"resources"`

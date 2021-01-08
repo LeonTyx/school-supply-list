@@ -10,9 +10,9 @@ import (
 )
 
 type supplyItem struct {
-	Id       int    `json:"id"`
-	Supply   string `json:"supply"`
-	Desc     string `json:"desc"`
+	ID       int            `json:"id"`
+	Supply   string         `json:"supply"`
+	Desc     string         `json:"desc"`
 	Category sql.NullString `json:"item_category"`
 }
 
@@ -26,7 +26,7 @@ func createSupply(db *database.DB) gin.HandlerFunc {
 		}
 		row := db.Db.QueryRow(`INSERT INTO supply_item (supply_name, supply_desc) 
 		  VALUES ($1, $2) RETURNING id`, supply.Supply, supply.Desc)
-		err = row.Scan(&supply.Id)
+		err = row.Scan(&supply.ID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
@@ -45,7 +45,7 @@ func getSupply(db *database.DB) gin.HandlerFunc {
 			return
 		}
 		supply := supplyItem{
-			Id: id,
+			ID: id,
 		}
 
 		row := db.Db.QueryRow(`SELECT supply_name, supply_desc FROM supply_item 
@@ -88,7 +88,7 @@ func updateSupply(db *database.DB) gin.HandlerFunc {
 		var supply supplyItem
 		err = json.NewDecoder(c.Request.Body).Decode(&supply)
 
-		supply.Id = id
+		supply.ID = id
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
@@ -97,7 +97,7 @@ func updateSupply(db *database.DB) gin.HandlerFunc {
 		row := db.Db.QueryRow(`UPDATE supply_item SET supply_name=$1, supply_desc=$2
 	   		where id=$3 returning id, supply_name, supply_desc`, supply.Supply, supply.Desc)
 		//Scan the latest changes into the supply struct
-		err = row.Scan(&supply.Id, &supply.Supply, supply.Desc)
+		err = row.Scan(&supply.ID, &supply.Supply, supply.Desc)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return

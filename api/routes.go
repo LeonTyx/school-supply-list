@@ -9,7 +9,13 @@ import (
 //All the routes created by the package nested in
 // api/v1/*
 func Routes(r *gin.RouterGroup, db *database.DB) {
-	//School
+	schoolRoutes(r, db)
+	listRoutes(r, db)
+	supplyRoutes(r, db)
+	roleRoutes(r, db)
+}
+
+func schoolRoutes(r *gin.RouterGroup, db *database.DB) {
 	r.PUT("/school", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "school"),
 		authorization.CanCreate(),
@@ -26,8 +32,9 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 		authorization.LoadPolicy(db, "school"),
 		authorization.CanDelete(),
 		deleteSchool(db))
+}
 
-	//Supply-list
+func listRoutes(r *gin.RouterGroup, db *database.DB) {
 	r.PUT("/supply-list", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanCreate(),
@@ -44,8 +51,9 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanDelete(),
 		deleteSupplyList(db))
+}
 
-	//Supply Item
+func supplyRoutes(r *gin.RouterGroup, db *database.DB) {
 	r.PUT("/supply", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "supply"),
 		authorization.CanCreate(),
@@ -66,4 +74,27 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 		authorization.LoadPolicy(db, "supply"),
 		authorization.CanDelete(),
 		deleteSupply(db))
+}
+
+func roleRoutes(r *gin.RouterGroup, db *database.DB) {
+	r.PUT("/role", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanCreate(),
+		createRole(db))
+	r.GET("/role/:id",
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanView(),
+		getRole(db))
+	r.GET("/role",
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanView(),
+		getAllRoles(db))
+	r.POST("/role/:id", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanEdit(),
+		updateRole(db))
+	r.DELETE("/role/:id", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "supply"),
+		authorization.CanDelete(),
+		deleteRole(db))
 }

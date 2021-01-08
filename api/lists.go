@@ -79,7 +79,7 @@ func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supply
 	for rows.Next() {
 		var supply supplyItem
 
-		err = rows.Scan(&supply.Id, &supply.Supply, &supply.Desc, &supply.Category)
+		err = rows.Scan(&supply.ID, &supply.Supply, &supply.Desc, &supply.Category)
 		basicSupplies = append(basicSupplies, supply)
 
 		// Check if item is categorized
