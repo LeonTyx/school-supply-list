@@ -5,7 +5,7 @@ import Home from "./Components/Home/Home";
 import {HashRouter, Route} from "react-router-dom"
 import SupplyList from "./Components/Supply List/SupplyList";
 import Account from "./Components/Account/Account";
-
+import Users from "./Components/Users/Users";
 function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null)
@@ -57,7 +57,12 @@ function App() {
                     <Route exact path="/" component={Home}/>
                     <Route path="/list/:id" component={SupplyList}/>
                     {user !== null && user !== undefined && (
-                        <Route exact path="/account" component={Account}/>
+                        <React.Fragment>
+                            <Route exact path="/account" component={Account}/>
+                            {user.consolidated_roles.resources.users.canEdit && (
+                                <Route exact path="/users" component={Users}/>
+                            )}
+                        </React.Fragment>
                     )}
                 </main>
             </userSession.Provider>
