@@ -6,6 +6,7 @@ import (
 	"school-supply-list/api/schools"
 	"school-supply-list/api/supplies"
 	"school-supply-list/api/supplylist"
+	"school-supply-list/api/users"
 	"school-supply-list/auth/authorization"
 	"school-supply-list/database"
 )
@@ -116,17 +117,17 @@ func userRoutes(r *gin.RouterGroup, db *database.DB) {
 	r.GET("/user/:id",
 		authorization.LoadPolicy(db, "user"),
 		authorization.CanView(),
-		permissions.GetRole(db))
+		users.GetUser(db))
 	r.GET("/user",
 		authorization.LoadPolicy(db, "user"),
 		authorization.CanView(),
-		permissions.GetAllRoles(db))
+		users.GetAllUsers(db))
 	r.POST("/user/:id", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "user"),
 		authorization.CanEdit(),
-		permissions.UpdateRole(db))
+		users.UpdateUser(db))
 	r.DELETE("/user/:id", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "user"),
 		authorization.CanDelete(),
-		permissions.DeleteRole(db))
+		users.DeleteUser(db))
 }

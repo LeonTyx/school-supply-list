@@ -7,7 +7,7 @@ function Users() {
 
     useEffect(() => {
         //Fetch user from api
-        fetch("/api/v1/users")
+        fetch("/api/v1/user")
             .then((res) => {
                 if (res.ok) {
                     return res.json()
@@ -16,6 +16,7 @@ function Users() {
             .then(
                 (result) => {
                     setUsers(result);
+                    console.log(result)
                 }, (error) => {
                     setUsers(null)
                     setError(error);

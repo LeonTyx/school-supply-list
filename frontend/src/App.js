@@ -29,7 +29,6 @@ function App() {
             .then(
                 (result) => {
                     setUser(result);
-                    console.log(user)
                     localStorage.setItem("user", JSON.stringify(result))
                 }, (error) => {
                     setUser(null)
@@ -59,7 +58,7 @@ function App() {
                     {user !== null && user !== undefined && (
                         <React.Fragment>
                             <Route exact path="/account" component={Account}/>
-                            {user.consolidated_roles.resources.users.can_view && (
+                            {user.consolidated_roles.resources.user.policy.can_view && (
                                 <Route exact path="/users" component={Users}/>
                             )}
                         </React.Fragment>
