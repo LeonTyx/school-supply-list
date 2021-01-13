@@ -1,4 +1,4 @@
-package api
+package permissions
 
 import (
 	"encoding/json"
@@ -9,7 +9,26 @@ import (
 	"strconv"
 )
 
-func createRole(db *database.DB) gin.HandlerFunc {
+func GetAllResources(db *database.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		resources := make(map[string]authorization.Resource)
+		rows, err := db.Db.Query(`SELECT resource_id, resource_name FROM resource`)
+		if err != nil {
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+		for rows.Next() {
+			var resource authorization.Resource
+			var  resourceName string
+			err = rows.Scan(&resource.ResourceID, &resourceName)
+			resources[resourceName] = resource
+		}
+
+		c.JSON(200, resources)
+	}
+}
+
+func CreateRole(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var role authorization.Role
 		err := json.NewDecoder(c.Request.Body).Decode(&role)
@@ -39,7 +58,7 @@ func createRole(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getRole(db *database.DB) gin.HandlerFunc {
+func GetRole(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -63,7 +82,7 @@ func getRole(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getAllRoles(db *database.DB) gin.HandlerFunc {
+func GetAllRoles(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var roles []authorization.Role
 		rows, err := db.Db.Query(`SELECT role_id, role_name, role_desc FROM role`)
@@ -80,7 +99,7 @@ func getAllRoles(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func updateRole(db *database.DB) gin.HandlerFunc {
+func UpdateRole(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -120,7 +139,7 @@ func updateRole(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func deleteRole(db *database.DB) gin.HandlerFunc {
+func DeleteRole(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)

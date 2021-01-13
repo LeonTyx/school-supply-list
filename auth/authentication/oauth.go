@@ -360,7 +360,7 @@ func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]a
 	return roles, nil
 }
 
-func getPolicyFromRoleID(c *gin.Context, roleID string, db *database.DB) (map[string]authorization.Resource, error) {
+func getPolicyFromRoleID(c *gin.Context, roleID int, db *database.DB) (map[string]authorization.Resource, error) {
 	resources := make(map[string]authorization.Resource)
 	resourcesRows, err := db.Db.Query(`SELECT resc.resource_id, resc.resource_name,rrb.can_add,
 						rrb.can_delete, rrb.can_edit, rrb.can_view from resource resc

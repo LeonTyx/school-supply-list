@@ -1,4 +1,4 @@
-package api
+package supplies
 
 import (
 	"database/sql"
@@ -9,16 +9,16 @@ import (
 	"strconv"
 )
 
-type supplyItem struct {
+type SupplyItem struct {
 	ID       int            `json:"id"`
 	Supply   string         `json:"supply"`
 	Desc     string         `json:"desc"`
 	Category sql.NullString `json:"item_category"`
 }
 
-func createSupply(db *database.DB) gin.HandlerFunc {
+func CreateSupply(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var supply supplyItem
+		var supply SupplyItem
 		err := json.NewDecoder(c.Request.Body).Decode(&supply)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
@@ -36,7 +36,7 @@ func createSupply(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getSupply(db *database.DB) gin.HandlerFunc {
+func GetSupply(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -44,7 +44,7 @@ func getSupply(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
 			return
 		}
-		supply := supplyItem{
+		supply := SupplyItem{
 			ID: id,
 		}
 
@@ -60,16 +60,16 @@ func getSupply(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getAllSupplies(db *database.DB) gin.HandlerFunc {
+func GetAllSupplies(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var supplies []supplyItem
+		var supplies []SupplyItem
 		rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc FROM supply_item`)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
 		for rows.Next() {
-			var supply supplyItem
+			var supply SupplyItem
 			err = rows.Scan(&supply.Supply, &supply.Desc, &supply.Desc)
 			supplies = append(supplies, supply)
 		}
@@ -77,7 +77,7 @@ func getAllSupplies(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func updateSupply(db *database.DB) gin.HandlerFunc {
+func UpdateSupply(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -85,7 +85,7 @@ func updateSupply(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
 			return
 		}
-		var supply supplyItem
+		var supply SupplyItem
 		err = json.NewDecoder(c.Request.Body).Decode(&supply)
 
 		supply.ID = id
@@ -107,7 +107,7 @@ func updateSupply(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func deleteSupply(db *database.DB) gin.HandlerFunc {
+func DeleteSupply(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)

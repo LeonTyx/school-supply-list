@@ -1,24 +1,25 @@
-package api
+package supplylist
 
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
+	"school-supply-list/api/supplies"
 	"school-supply-list/database"
 	"strconv"
 )
 
 type supplyList struct {
-	ListID              int                     `json:"list_id"`
-	Grade               int                     `json:"grade"`
-	SchoolID            int                     `json:"school_id"`
-	ListName            string                  `json:"list_name"`
-	BasicSupplies       []supplyItem            `json:"basic_supplies"`
-	CategorizedSupplies map[string][]supplyItem `json:"categorized_supplies"`
-	Published           bool                    `json:"published"`
+	ListID              int                              `json:"list_id"`
+	Grade               int                              `json:"grade"`
+	SchoolID            int                              `json:"school_id"`
+	ListName            string                           `json:"list_name"`
+	BasicSupplies       []supplies.SupplyItem            `json:"basic_supplies"`
+	CategorizedSupplies map[string][]supplies.SupplyItem `json:"categorized_supplies"`
+	Published           bool                             `json:"published"`
 }
 
-func createSupplyList(db *database.DB) gin.HandlerFunc {
+func CreateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var list supplyList
 		err := json.NewDecoder(c.Request.Body).Decode(&list)
@@ -38,7 +39,7 @@ func createSupplyList(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getSupplyList(db *database.DB) gin.HandlerFunc {
+func GetSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -67,9 +68,9 @@ func getSupplyList(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supplyItem, error) {
-	var basicSupplies []supplyItem
-	categorizedSupplies := make(map[string][]supplyItem)
+func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string][]supplies.SupplyItem, error) {
+	var basicSupplies []supplies.SupplyItem
+	categorizedSupplies := make(map[string][]supplies.SupplyItem)
 	rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc, ilb.category FROM supply_item sup 
 										INNER JOIN item_list_bridge ilb on sup.id = ilb.item_id
 										WHERE ilb.list_id = $1`, id)
@@ -77,7 +78,7 @@ func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supply
 		return basicSupplies, categorizedSupplies, err
 	}
 	for rows.Next() {
-		var supply supplyItem
+		var supply supplies.SupplyItem
 
 		err = rows.Scan(&supply.ID, &supply.Supply, &supply.Desc, &supply.Category)
 		basicSupplies = append(basicSupplies, supply)
@@ -88,7 +89,7 @@ func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supply
 			if val, ok := categorizedSupplies[supply.Category.String]; ok {
 				val = append(val, supply)
 			}else{
-				categorizedSupplies[supply.Category.String] = []supplyItem{supply}
+				categorizedSupplies[supply.Category.String] = []supplies.SupplyItem{supply}
 			}
 		}else{
 			basicSupplies = append(basicSupplies, supply)
@@ -97,7 +98,7 @@ func getItemsForList(id int, db *database.DB) ([]supplyItem, map[string][]supply
 	return basicSupplies, categorizedSupplies, nil
 }
 
-func getSupplyLists(db *database.DB) gin.HandlerFunc {
+func GetSupplyLists(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var lists []supplyList
 		rows, err := db.Db.Query(`SELECT grade, list_name, school_id from supply_list`)
@@ -114,7 +115,7 @@ func getSupplyLists(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func updateSupplyList(db *database.DB) gin.HandlerFunc {
+func UpdateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -143,7 +144,7 @@ func updateSupplyList(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func deleteSupplyList(db *database.DB) gin.HandlerFunc {
+func DeleteSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)

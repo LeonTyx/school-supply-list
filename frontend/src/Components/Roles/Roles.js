@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import './Users.scss'
+import './Role.scss'
 
-function Users() {
-    const [users, setUsers] = useState(null);
+function Role() {
+    const [roles, setRoles] = useState(null);
     const [error, setError] = useState(null)
 
     useEffect(() => {
         //Fetch user from api
-        fetch("/api/v1/users")
+        fetch("/api/v1/roles")
             .then((res) => {
                 if (res.ok) {
                     return res.json()
@@ -15,9 +15,9 @@ function Users() {
             })
             .then(
                 (result) => {
-                    setUsers(result);
+                    setRoles(result);
                 }, (error) => {
-                    setUsers(null)
+                    setRoles(null)
                     setError(error);
                 }
             )
@@ -26,11 +26,11 @@ function Users() {
     return (
         error != null &&
         <div>
-            {users.map((user) =>
-                <div>{user.name}</div>
+            {roles.map((role) =>
+                <div>{role.role_name}</div>
             )}
         </div>
     );
 }
 
-export default Users;
+export default Role;

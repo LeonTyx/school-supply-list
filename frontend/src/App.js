@@ -59,7 +59,7 @@ function App() {
                     {user !== null && user !== undefined && (
                         <React.Fragment>
                             <Route exact path="/account" component={Account}/>
-                            {user.consolidated_roles.resources.users.canEdit && (
+                            {user.consolidated_roles.resources.users.can_view && (
                                 <Route exact path="/users" component={Users}/>
                             )}
                         </React.Fragment>

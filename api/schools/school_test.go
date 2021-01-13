@@ -1,4 +1,4 @@
-package api
+package schools
 
 import (
 	"bytes"
@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"school-supply-list/api"
 	"school-supply-list/database"
 	"testing"
 )
@@ -35,7 +36,7 @@ func init() {
 	db = database.InitDBConnection()
 	SessionStore = database.InitOauthStore()
 	dbConnection := &database.DB{Db: db, SessionStore: SessionStore}
-	Routes(r.Group("api/v1"), dbConnection)
+	api.Routes(r.Group("api/v1"), dbConnection)
 }
 
 func createTestUser() {

@@ -1,4 +1,4 @@
-package api
+package schools
 
 import (
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ type school struct {
 	SchoolName string `json:"school_name"`
 }
 
-func createSchool(db *database.DB) gin.HandlerFunc {
+func CreateSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var school school
 		err := c.BindJSON(&school)
@@ -31,7 +31,7 @@ func createSchool(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getSchool(db *database.DB) gin.HandlerFunc {
+func GetSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -61,7 +61,7 @@ func getSchool(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func getSchools(db *database.DB) gin.HandlerFunc {
+func GetSchools(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var schools []school
 		schoolsRows, err := db.Db.Query(`SELECT school_id, school_name from school`)
@@ -83,7 +83,7 @@ func getSchools(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func updateSchool(db *database.DB) gin.HandlerFunc {
+func UpdateSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
@@ -108,7 +108,7 @@ func updateSchool(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func deleteSchool(db *database.DB) gin.HandlerFunc {
+func DeleteSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)

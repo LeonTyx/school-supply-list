@@ -24,7 +24,11 @@ and secret in the ``credentials`` tab Populate the projectvars.env file with you
 ``GOOGLE_CLIENT_ID=<CLIENTID>``
 
 ``GOOGLE_CLIENT_SECRET=<SECRET>``
+## Create Administrator
 
+Login to your application once with Google oauth to generate your user account
+
+Type `TEST` into the database command line and change your role to `Test`
 ## Add Database Changes
 
 ``migrate create -ext sql -dir database/migrations -seq <MIGRATION_NAME>``
