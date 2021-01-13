@@ -325,12 +325,13 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 
 func consolidateRoles(roles []authorization.Role) authorization.Role {
 	var consolidatedRole authorization.Role
+	var resources = make(map[string]authorization.Resource)
 	for _, role := range roles {
 		for resource, resourceDetails := range role.Resources {
-			consolidatedRole.Resources[resource] = resourceDetails
+			resources[resource] = resourceDetails
 		}
 	}
-
+	consolidatedRole.Resources = resources
 	return consolidatedRole
 }
 
