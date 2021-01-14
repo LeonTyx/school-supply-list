@@ -93,6 +93,9 @@ func GetAllRoles(db *database.DB) gin.HandlerFunc {
 		for rows.Next() {
 			var role authorization.Role
 			err = rows.Scan(&role.ID, &role.Name, &role.Desc)
+			if err != nil{
+				database.CheckDBErr(err.(*pq.Error), c)
+			}
 			roles = append(roles, role)
 		}
 		c.JSON(200, roles)

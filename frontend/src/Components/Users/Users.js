@@ -16,7 +16,6 @@ function Users() {
             .then(
                 (result) => {
                     setUsers(result);
-                    console.log(result)
                 }, (error) => {
                     setUsers(null)
                     setError(error);
