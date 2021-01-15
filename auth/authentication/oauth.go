@@ -328,7 +328,15 @@ func consolidateRoles(roles []authorization.Role) authorization.Role {
 	var resources = make(map[string]authorization.Resource)
 	for _, role := range roles {
 		for resource, resourceDetails := range role.Resources {
-			resources[resource] = resourceDetails
+			resources[resource] = authorization.Resource{
+				ResourceID: resourceDetails.ResourceID,
+				Policy:     authorization.Policy{
+					CanAdd:    resources[resource].Policy.CanAdd || resourceDetails.Policy.CanAdd,
+					CanDelete: resources[resource].Policy.CanDelete || resourceDetails.Policy.CanDelete,
+					CanEdit:   resources[resource].Policy.CanEdit || resourceDetails.Policy.CanEdit,
+					CanView:   resources[resource].Policy.CanView || resourceDetails.Policy.CanView,
+				},
+			}
 		}
 	}
 	consolidatedRole.Resources = resources

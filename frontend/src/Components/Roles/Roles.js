@@ -24,7 +24,7 @@ function Role() {
     }, [])
 
     return (
-        error != null &&
+        error === null &&
         <div>
             {roles.map((role) =>
                 <div>{role.role_name}</div>

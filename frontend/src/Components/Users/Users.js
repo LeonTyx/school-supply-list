@@ -24,7 +24,7 @@ function Users() {
     }, [])
 
     return (
-        error != null &&
+        error === null && users != null&&
         <div>
             {users.map((user) =>
                 <div>{user.name}</div>

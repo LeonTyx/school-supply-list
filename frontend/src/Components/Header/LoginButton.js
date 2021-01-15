@@ -23,7 +23,7 @@ export default function LoginButton() {
     }
 
     return (
-        user == null ? (
+        user === null ? (
             <a href={"./oauth/v1/login"} className="login-button">Login</a>
         ) : (
             <div>
