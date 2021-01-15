@@ -13,7 +13,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"school-supply-list/api"
+	"school-supply-list/auth/authorization"
 	"school-supply-list/database"
 	"testing"
 )
@@ -24,19 +24,37 @@ var db *sql.DB
 
 func init() {
 	r = gin.Default()
-
-	if _, err := os.Stat("../projectvars.env"); err == nil {
-		err := godotenv.Load("../projectvars.env")
+	if _, err := os.Stat("../../projectvars.env"); err == nil {
+		err := godotenv.Load("../../projectvars.env")
 		if err != nil {
 			fmt.Println("Error loading environment.env")
 		}
 		fmt.Println("Current environment:", os.Getenv("ENV"))
 	}
+	database.PerformMigrations("file://../../database/migrations")
 
 	db = database.InitDBConnection()
-	SessionStore = database.InitOauthStore()
+	SessionStore := database.InitOauthStore()
+
 	dbConnection := &database.DB{Db: db, SessionStore: SessionStore}
-	api.Routes(r.Group("api/v1"), dbConnection)
+
+	rgroup := r.Group("api/v1")
+	rgroup.PUT("/school", authorization.ValidSession(dbConnection),
+		authorization.LoadPolicy(dbConnection, "school"),
+		authorization.CanCreate(),
+		CreateSchool(dbConnection))
+	rgroup.GET("/school/:id",
+		GetSchool(dbConnection))
+	rgroup.GET("/schools",
+		GetSchools(dbConnection))
+	rgroup.POST("/school/:id", authorization.ValidSession(dbConnection),
+		authorization.LoadPolicy(dbConnection, "school"),
+		authorization.CanEdit(),
+		UpdateSchool(dbConnection))
+	rgroup.DELETE("/school/:id", authorization.ValidSession(dbConnection),
+		authorization.LoadPolicy(dbConnection, "school"),
+		authorization.CanDelete(),
+		DeleteSchool(dbConnection))
 }
 
 func createTestUser() {
@@ -102,7 +120,6 @@ func addValidRole() int {
 }
 
 func TestCreateSchool(t *testing.T) {
-	database.PerformMigrations("file://../database/migrations")
 	school := school{
 		SchoolName: "Little Test Elementary",
 	}
