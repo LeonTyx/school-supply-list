@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './Users.scss'
+import Error from "../Error/Error";
 
 function Users() {
     const [users, setUsers] = useState(null);
@@ -11,6 +12,8 @@ function Users() {
             .then((res) => {
                 if (res.ok) {
                     return res.json()
+                }else{
+                    setError("error");
                 }
             })
             .then(
@@ -24,12 +27,15 @@ function Users() {
     }, [])
 
     return (
-        error === null && users != null&&
-        <div>
-            {users.map((user) =>
-                <div>{user.name}</div>
-            )}
-        </div>
+        error === null && users !== null ? (
+            <div>
+                {users.map((user) =>
+                    <div>{user.name}</div>
+                )}
+            </div>
+        ):(
+            <Error error_msg_str={error}/>
+        )
     );
 }
 

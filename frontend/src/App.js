@@ -6,6 +6,7 @@ import {HashRouter, Route} from "react-router-dom"
 import SupplyList from "./Components/Supply List/SupplyList";
 import Account from "./Components/Account/Account";
 import Users from "./Components/Users/Users";
+import Error from "./Components/Error/Error";
 function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null)
@@ -48,7 +49,7 @@ function App() {
     }
 
     return (
-        error === null &&
+        error === null ? (
         <HashRouter>
             <userSession.Provider value={[user, setUser]}>
                 <Header/>
@@ -66,6 +67,9 @@ function App() {
                 </main>
             </userSession.Provider>
         </HashRouter>
+        ):(
+            <Error error_msg_str={"Error!"}/>
+        )
     );
 }
 

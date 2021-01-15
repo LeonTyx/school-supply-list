@@ -11,7 +11,7 @@ type User struct {
 	Name          string   `json:"name"`
 	Email         string   `json:"email"`
 	AccountImgURL string   `json:"account_img_url"`
-	Roles         []int `json:"roles"`
+	Roles         map[int]string `json:"roles"`
 }
 
 func GetUser(db *database.DB) gin.HandlerFunc {
@@ -36,22 +36,52 @@ func GetUser(db *database.DB) gin.HandlerFunc {
 func GetAllUsers(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var users []User
-		rows, err := db.Db.Query(`SELECT name, email, google_picture FROM account`)
+		rows, err := db.Db.Query(`SELECT user_id, name, email, google_picture FROM account`)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
 		for rows.Next() {
 			var user User
-			err = rows.Scan(&user.Name, &user.Email, &user.AccountImgURL)
+			err = rows.Scan(&user.ID, &user.Name, &user.Email, &user.AccountImgURL)
+			if err != nil {
+				database.CheckDBErr(err.(*pq.Error), c)
+				return
+			}
+			user.Roles, err = getUserRoles(db, user.ID)
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
 			users = append(users, user)
 		}
+
+
 		c.JSON(200, users)
 	}
+}
+
+func getUserRoles(db *database.DB, UserID string) (map[int]string, error){
+	roles := make(map[int]string)
+
+	rows, err := db.Db.Query(`SELECT r.role_id, r.role_name FROM user_role_bridge 
+    								INNER JOIN role r on r.role_id = user_role_bridge.role_id 
+									WHERE user_uuid=$1;`, UserID)
+	if err != nil {
+		return roles, err
+	}
+	for rows.Next() {
+		var roleID int
+		var roleName string
+		err = rows.Scan(&roleID, &roleName)
+		if err != nil {
+			return roles, err
+		}
+
+		roles[roleID] = roleName
+	}
+
+	return roles, err
 }
 
 func UpdateUser(db *database.DB) gin.HandlerFunc {
