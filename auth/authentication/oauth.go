@@ -252,12 +252,12 @@ func handleGoogleLogout(db *database.DB) gin.HandlerFunc {
 }
 
 type Account struct {
-	Email             string               `json:"email"`
-	Name              string               `json:"name"`
-	Picture           string               `json:"picture"`
-	Roles             []authorization.Role `json:"roles"`
-	ConsolidatedRoles authorization.Role   `json:"consolidated_roles"`
-	ID                string               `json:"user_id"`
+	Email                 string                            `json:"email"`
+	Name                  string                            `json:"name"`
+	Picture               string                            `json:"picture"`
+	Roles                 []authorization.Role              `json:"roles"`
+	ConsolidatedResources map[string]authorization.Resource `json:"consolidated_resources"`
+	ID                    string                            `json:"user_id"`
 }
 
 func refreshSession(db *database.DB) gin.HandlerFunc {
@@ -311,10 +311,9 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
-			consolidatedRoles := consolidateRoles(roles)
 
-			//TODO actually consolidate roles
-			userData := Account{EmailStr, NameStr, PictureUrlStr, roles, consolidatedRoles, userID}
+			consolidatedPermissions := consolidatePermissions(roles)
+			userData := Account{EmailStr, NameStr, PictureUrlStr, roles, consolidatedPermissions, userID}
 
 			c.JSON(200, userData)
 		} else {
@@ -323,11 +322,9 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 	}
 }
 
-func consolidateRoles(roles []authorization.Role) authorization.Role {
-	var consolidatedRole authorization.Role
+func consolidatePermissions(roles []authorization.Role) map[string]authorization.Resource {
 	var resources = make(map[string]authorization.Resource)
 	for _, role := range roles {
-
 		for resource, resourceDetails := range role.Resources {
 			resources[resource] = authorization.Resource{
 				ResourceID: resourceDetails.ResourceID,
@@ -341,8 +338,7 @@ func consolidateRoles(roles []authorization.Role) authorization.Role {
 		}
 	}
 
-	consolidatedRole.Resources = resources
-	return consolidatedRole
+	return resources
 }
 
 func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, error) {

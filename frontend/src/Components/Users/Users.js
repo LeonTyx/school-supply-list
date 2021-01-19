@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Users.scss'
 import Error from "../Error/Error";
+import User from "./User";
 
 function Users() {
     const [users, setUsers] = useState(null);
@@ -48,7 +49,7 @@ function Users() {
         error === null && users !== null && roles !== null ? (
             <div>
                 {users.map((user) =>
-                    <div>{user.name}</div>
+                    <User user={user}/>
                 )}
                 <div>
                     {roles.map((role) =>

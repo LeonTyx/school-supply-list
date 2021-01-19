@@ -57,12 +57,15 @@ function App() {
                     <main>
                         <Route exact path="/" component={Home}/>
                         <Route path="/list/:id" component={SupplyList}/>
-                        {user !== null && user !== undefined && (
+                        {user !== null && user !== undefined && user.consolidated_resources !== undefined &&(
                             <React.Fragment>
                                 <Route exact path="/account" component={Account}/>
-                                {user.consolidated_roles.resources.user.policy.can_view && (
-                                    <Route exact path="/users" component={Users}/>
+                                {user.consolidated_resources.user !== undefined &&(
+                                    user.consolidated_resources.user.policy.can_view && (
+                                        <Route exact path="/users" component={Users}/>
+                                    )
                                 )}
+
                             </React.Fragment>
                         )}
                     </main>
