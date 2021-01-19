@@ -23,7 +23,7 @@ export default function LoginButton() {
     }
 
     return (
-        user === null || user === undefined? (
+        user === null || user === undefined ? (
             <a href={"./oauth/v1/login"} className="login-button">Login</a>
         ) : (
             <div>

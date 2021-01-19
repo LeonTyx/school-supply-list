@@ -252,12 +252,12 @@ func handleGoogleLogout(db *database.DB) gin.HandlerFunc {
 }
 
 type Account struct {
-	Email   string               `json:"email"`
-	Name    string               `json:"name"`
-	Picture string               `json:"picture"`
-	Roles   []authorization.Role `json:"roles"`
-	ConsolidatedRoles authorization.Role `json:"consolidated_roles"`
-	ID      string               `json:"user_id"`
+	Email             string               `json:"email"`
+	Name              string               `json:"name"`
+	Picture           string               `json:"picture"`
+	Roles             []authorization.Role `json:"roles"`
+	ConsolidatedRoles authorization.Role   `json:"consolidated_roles"`
+	ID                string               `json:"user_id"`
 }
 
 func refreshSession(db *database.DB) gin.HandlerFunc {
@@ -311,10 +311,10 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
-            consolidatedRoles := consolidateRoles(roles)
+			consolidatedRoles := consolidateRoles(roles)
 
 			//TODO actually consolidate roles
-			userData := Account{EmailStr, NameStr, PictureUrlStr, roles, consolidatedRoles,userID}
+			userData := Account{EmailStr, NameStr, PictureUrlStr, roles, consolidatedRoles, userID}
 
 			c.JSON(200, userData)
 		} else {
@@ -327,10 +327,11 @@ func consolidateRoles(roles []authorization.Role) authorization.Role {
 	var consolidatedRole authorization.Role
 	var resources = make(map[string]authorization.Resource)
 	for _, role := range roles {
+
 		for resource, resourceDetails := range role.Resources {
 			resources[resource] = authorization.Resource{
 				ResourceID: resourceDetails.ResourceID,
-				Policy:     authorization.Policy{
+				Policy: authorization.Policy{
 					CanAdd:    resources[resource].Policy.CanAdd || resourceDetails.Policy.CanAdd,
 					CanDelete: resources[resource].Policy.CanDelete || resourceDetails.Policy.CanDelete,
 					CanEdit:   resources[resource].Policy.CanEdit || resourceDetails.Policy.CanEdit,
@@ -339,20 +340,20 @@ func consolidateRoles(roles []authorization.Role) authorization.Role {
 			}
 		}
 	}
+
 	consolidatedRole.Resources = resources
 	return consolidatedRole
 }
 
 func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]authorization.Role, error) {
 	var roles []authorization.Role
-	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc from role 
+	roleRows, err := db.Db.Query(`SELECT role.role_id, role.role_name, role.role_desc from role
 											INNER JOIN user_role_bridge urb on role.role_id = urb.role_id
 											INNER JOIN account a on urb.user_uuid = a.user_id
-											where a.google_id=$1`, googleID)
+											WHERE a.google_id=$1`, googleID)
 	if err != nil {
 		return nil, err
 	}
-
 	for roleRows.Next() {
 		var role authorization.Role
 		err = roleRows.Scan(&role.ID, &role.Name, &role.Desc)
@@ -363,6 +364,7 @@ func getRolesFromGoogleID(c *gin.Context, db *database.DB, googleID string) ([]a
 		if err != nil {
 			return nil, err
 		}
+
 		roles = append(roles, role)
 	}
 

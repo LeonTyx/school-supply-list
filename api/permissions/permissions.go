@@ -19,7 +19,7 @@ func GetAllResources(db *database.DB) gin.HandlerFunc {
 		}
 		for rows.Next() {
 			var resource authorization.Resource
-			var  resourceName string
+			var resourceName string
 			err = rows.Scan(&resource.ResourceID, &resourceName)
 			resources[resourceName] = resource
 		}
@@ -44,10 +44,10 @@ func CreateRole(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-		for _, resourceDetails := range role.Resources{
+		for _, resourceDetails := range role.Resources {
 			row = db.Db.QueryRow(`INSERT INTO role_resource_bridge (can_add, can_view, can_edit, can_delete, resource_id, role_id) 
 		  			VALUES ($1, $2, $3, $4, $5, $6)`, resourceDetails.Policy.CanAdd, resourceDetails.Policy.CanView,
-		  			resourceDetails.Policy.CanEdit, resourceDetails.Policy.CanDelete, resourceDetails.ResourceID, role.ID)
+				resourceDetails.Policy.CanEdit, resourceDetails.Policy.CanDelete, resourceDetails.ResourceID, role.ID)
 			if row.Err() != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
@@ -93,7 +93,7 @@ func GetAllRoles(db *database.DB) gin.HandlerFunc {
 		for rows.Next() {
 			var role authorization.Role
 			err = rows.Scan(&role.ID, &role.Name, &role.Desc)
-			if err != nil{
+			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 			}
 			roles = append(roles, role)
@@ -127,12 +127,12 @@ func UpdateRole(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-		for _, resourceDetails := range role.Resources{
+		for _, resourceDetails := range role.Resources {
 			row = db.Db.QueryRow(`UPDATE role_resource_bridge SET can_add=$1, can_view=$2, 
                                 can_edit=$3, can_delete=$4, resource_id=$5 WHERE role_id=$6`,
-                                resourceDetails.Policy.CanAdd, resourceDetails.Policy.CanView,
-								resourceDetails.Policy.CanEdit, resourceDetails.Policy.CanDelete,
-								resourceDetails.ResourceID, role.ID)
+				resourceDetails.Policy.CanAdd, resourceDetails.Policy.CanView,
+				resourceDetails.Policy.CanEdit, resourceDetails.Policy.CanDelete,
+				resourceDetails.ResourceID, role.ID)
 			if row.Err() != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 				return

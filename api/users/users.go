@@ -7,10 +7,10 @@ import (
 )
 
 type User struct {
-	ID            string   `json:"user_id"`
-	Name          string   `json:"name"`
-	Email         string   `json:"email"`
-	AccountImgURL string   `json:"account_img_url"`
+	ID            string         `json:"user_id"`
+	Name          string         `json:"name"`
+	Email         string         `json:"email"`
+	AccountImgURL string         `json:"account_img_url"`
 	Roles         map[int]string `json:"roles"`
 }
 
@@ -56,12 +56,11 @@ func GetAllUsers(db *database.DB) gin.HandlerFunc {
 			users = append(users, user)
 		}
 
-
 		c.JSON(200, users)
 	}
 }
 
-func getUserRoles(db *database.DB, UserID string) (map[int]string, error){
+func getUserRoles(db *database.DB, UserID string) (map[int]string, error) {
 	roles := make(map[int]string)
 
 	rows, err := db.Db.Query(`SELECT r.role_id, r.role_name FROM user_role_bridge 
@@ -101,7 +100,7 @@ func UpdateUser(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-		for role := range user.Roles{
+		for role := range user.Roles {
 			row = db.Db.QueryRow(`INSERT INTO user_role_bridge (user_uuid, role_id) VALUES ($1, $2)`, user.ID, role)
 			if row.Err() != nil {
 				database.CheckDBErr(err.(*pq.Error), c)

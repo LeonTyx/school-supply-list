@@ -7,6 +7,7 @@ import SupplyList from "./Components/Supply List/SupplyList";
 import Account from "./Components/Account/Account";
 import Users from "./Components/Users/Users";
 import Error from "./Components/Error/Error";
+
 function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null)
@@ -50,24 +51,24 @@ function App() {
 
     return (
         error === null ? (
-        <HashRouter>
-            <userSession.Provider value={[user, setUser]}>
-                <Header/>
-                <main>
-                    <Route exact path="/" component={Home}/>
-                    <Route path="/list/:id" component={SupplyList}/>
-                    {user !== null && user !== undefined && (
-                        <React.Fragment>
-                            <Route exact path="/account" component={Account}/>
-                            {user.consolidated_roles.resources.user.policy.can_view && (
-                                <Route exact path="/users" component={Users}/>
-                            )}
-                        </React.Fragment>
-                    )}
-                </main>
-            </userSession.Provider>
-        </HashRouter>
-        ):(
+            <HashRouter>
+                <userSession.Provider value={[user, setUser]}>
+                    <Header/>
+                    <main>
+                        <Route exact path="/" component={Home}/>
+                        <Route path="/list/:id" component={SupplyList}/>
+                        {user !== null && user !== undefined && (
+                            <React.Fragment>
+                                <Route exact path="/account" component={Account}/>
+                                {user.consolidated_roles.resources.user.policy.can_view && (
+                                    <Route exact path="/users" component={Users}/>
+                                )}
+                            </React.Fragment>
+                        )}
+                    </main>
+                </userSession.Provider>
+            </HashRouter>
+        ) : (
             <Error error_msg_str={"Error!"}/>
         )
     );

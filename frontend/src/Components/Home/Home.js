@@ -36,13 +36,13 @@ function Home() {
             </section>
 
             {user != null &&
-                user.roles.consolidated_roles.resources.schools.policy.can_add && (
-                    <div>
-                        Create School
-                        <input placeholder="name"/>
-                        <button>Create</button>
-                    </div>
-                )
+            user.roles.consolidated_roles.resources.schools.policy.can_add && (
+                <div>
+                    Create School
+                    <input placeholder="name"/>
+                    <button>Create</button>
+                </div>
+            )
             }
         </div>
     );

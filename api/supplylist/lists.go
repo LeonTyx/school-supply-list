@@ -58,7 +58,7 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
-		list.BasicSupplies, list.CategorizedSupplies,err = getItemsForList(list.ListID, db)
+		list.BasicSupplies, list.CategorizedSupplies, err = getItemsForList(list.ListID, db)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
@@ -88,10 +88,10 @@ func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string
 			// Either create a new map item or add to existing item
 			if val, ok := categorizedSupplies[supply.Category.String]; ok {
 				val = append(val, supply)
-			}else{
+			} else {
 				categorizedSupplies[supply.Category.String] = []supplies.SupplyItem{supply}
 			}
-		}else{
+		} else {
 			basicSupplies = append(basicSupplies, supply)
 		}
 	}
