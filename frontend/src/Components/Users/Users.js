@@ -49,13 +49,8 @@ function Users() {
         error === null && users !== null && roles !== null ? (
             <div>
                 {users.map((user) =>
-                    <User user={user}/>
+                    <User user={user} roles={roles} key={user.user_id}/>
                 )}
-                <div>
-                    {roles.map((role) =>
-                        <div>{role.name}</div>
-                    )}
-                </div>
             </div>
         ) : (
             <Error error_msg_str={error}/>

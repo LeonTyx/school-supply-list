@@ -325,6 +325,7 @@ func getAccount(db *database.DB) gin.HandlerFunc {
 func consolidatePermissions(roles []authorization.Role) map[string]authorization.Resource {
 	var resources = make(map[string]authorization.Resource)
 	for _, role := range roles {
+		//Loop through each role and combine the permissions for each resource
 		for resource, resourceDetails := range role.Resources {
 			resources[resource] = authorization.Resource{
 				ResourceID: resourceDetails.ResourceID,
