@@ -84,7 +84,7 @@ func GetRole(db *database.DB) gin.HandlerFunc {
 
 func GetAllRoles(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var roles []authorization.Role
+		var roles = make(map[int]authorization.Role)
 		rows, err := db.Db.Query(`SELECT role_id, role_name, role_desc FROM role`)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
@@ -96,7 +96,7 @@ func GetAllRoles(db *database.DB) gin.HandlerFunc {
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
 			}
-			roles = append(roles, role)
+			roles[role.ID] = role;
 		}
 		c.JSON(200, roles)
 	}

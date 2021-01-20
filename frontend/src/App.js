@@ -7,6 +7,7 @@ import SupplyList from "./Components/Supply List/SupplyList";
 import Account from "./Components/Account/Account";
 import Users from "./Components/Users/Users";
 import Error from "./Components/Error/Error";
+import Navbar from "./Components/NavBar/Navbar";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -69,6 +70,7 @@ function App() {
                             </React.Fragment>
                         )}
                     </main>
+                    <Navbar/>
                 </userSession.Provider>
             </HashRouter>
         ) : (
