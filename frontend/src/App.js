@@ -8,6 +8,7 @@ import Account from "./Components/Account/Account";
 import Users from "./Components/Users/Users";
 import Error from "./Components/Error/Error";
 import Navbar from "./Components/NavBar/Navbar";
+import Roles from "./Components/Roles/Roles";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -67,8 +68,14 @@ function App() {
                                     )
                                 )}
 
+                                {user.consolidated_resources.role !== undefined && (
+                                    user.consolidated_resources.role.policy.can_view && (
+                                        <Route exact path="/roles" component={Roles}/>
+                                    )
+                                )}
                             </React.Fragment>
                         )}
+
                     </main>
                     <Navbar/>
                 </userSession.Provider>

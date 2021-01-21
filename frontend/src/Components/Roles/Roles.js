@@ -1,18 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import './Role.scss'
+import Role from "./Role";
+import './Roles.scss'
 
-function Role() {
+function Roles() {
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState(null)
-
+    function handleErrors(response, errorMessage) {
+        if (!response.ok) {
+            setError(errorMessage)
+        }
+        return response.json();
+    }
     useEffect(() => {
-        //Fetch user from api
-        fetch("/api/v1/roles")
-            .then((res) => {
-                if (res.ok) {
-                    return res.json()
-                }
-            })
+        //Fetch roles from api
+        fetch("/api/v1/role")
+            .then((resp)=>handleErrors(resp, "Unable to delete user"))
             .then(
                 (result) => {
                     setRoles(result);
@@ -24,13 +26,13 @@ function Role() {
     }, [])
 
     return (
-        error === null &&
+        error === null && roles != null &&
         <div>
-            {roles.map((role) =>
-                <div>{role.role_name}</div>
+            {Object.keys(roles).map((roleID) =>
+                <Role role={roles[roleID]} key={roleID}/>
             )}
         </div>
     );
 }
 
-export default Role;
+export default Roles;
