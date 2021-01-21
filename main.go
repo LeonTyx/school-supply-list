@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -25,7 +26,8 @@ func initEnv() {
 
 func createServer(dbConnection *database.DB) *gin.Engine {
 	r := gin.Default()
-
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
+	
 	authentication.Routes(r.Group("oauth/v1"), dbConnection)
 	api.Routes(r.Group("api/v1"), dbConnection)
 	r.Use(static.Serve("/", static.LocalFile("./frontend/build", true)))
