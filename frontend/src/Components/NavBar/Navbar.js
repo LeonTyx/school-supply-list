@@ -1,11 +1,12 @@
 import React from 'react';
 import './Navbar.scss'
-import {Link} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 function Navbar() {
     return (
         <nav>
-            <Link to="/users">Users</Link>
+            <NavLink to="/users" activeClassName="active">Users</NavLink>
+            <NavLink to="/roles" activeClassName="active">Roles</NavLink>
         </nav>
     );
 

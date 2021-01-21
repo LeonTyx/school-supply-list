@@ -1,0 +1,43 @@
+nav {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background: #fff;
+  overflow: auto;
+  text-align: center;
+  padding: .6em 0;
+  box-sizing: border-box;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1.2em;
+    font-weight: 400;
+    padding: .5em 1em;
+
+    &:Hover {
+      background: #2e3440;
+      color: #fff;
+      transition: background-color .2s;
+    }
+  }
+
+  .active {
+    background: #2e3440;
+    color: #fff;
+  }
+}
+
+/*
+@media (prefers-color-scheme: dark) {
+  nav {
+    background: #2e3440;
+    color: white;
+
+    .active {
+      background: #3b4252;
+      color: #fff;
+    }
+  }
+}
+*/
