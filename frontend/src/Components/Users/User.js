@@ -2,40 +2,40 @@ import React, {useState} from "react";
 
 function User(props) {
     const roles = props.roles;
-    const [userRoles, setUserRoles] = useState(JSON.parse(JSON.stringify(props.user.roles)))
+    const [user, setUser] = useState(JSON.parse(JSON.stringify(props.user)))
 
-    function deleteUser(){
+    function deleteUser() {
         const Http = new XMLHttpRequest();
-        Http.open("DELETE", "./api/v1/user/"+ props.user.user_id, true);
+        Http.open("DELETE", "./api/v1/user/" + props.user.user_id, true);
         Http.send();
     }
 
-    function updateRoles(){
+    function updateRoles() {
         const Http = new XMLHttpRequest();
-        Http.open("POST", "./api/v1/user/"+ props.user.user_id, true);
-        Http.send(JSON.stringify(userRoles));
+        Http.open("POST", "./api/v1/user/" + props.user.user_id, true);
+        Http.send(JSON.stringify(user));
     }
 
-    function updateCheckBox(id){
-        let userRolesCopy = Object.assign({}, userRoles);
-        if(userRolesCopy[id] == null){
-            userRolesCopy[id] = roles[id].name
-            setUserRoles(userRolesCopy)
-        }else{
-            delete userRolesCopy[id]
-            setUserRoles(userRolesCopy)
+    function updateCheckBox(id) {
+        let userCopy = Object.assign({}, user);
+        if (userCopy.roles[id] == null) {
+            userCopy.roles[id] = roles[id].name
+            setUser(userCopy)
+        } else {
+            delete userCopy.roles[id]
+            setUser(userCopy)
         }
     }
 
     return (
         <div>
-            {props.user.name}
+            {user.name}
             <div className="roles">
                 {Object.keys(roles).map((roleID) =>
                     <label key={roleID}>
                         <input type="checkbox"
-                               checked={userRoles[roleID] != null}
-                               onChange={()=>updateCheckBox(roleID)}/>
+                               checked={user.roles[roleID] != null}
+                               onChange={() => updateCheckBox(roleID)}/>
                         {roles[roleID].name}
                     </label>
                 )}
