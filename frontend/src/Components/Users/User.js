@@ -3,21 +3,22 @@ import Error from "../Error/Error";
 
 function User(props) {
     const roles = props.roles;
+    const [isDeleted, setIsDeleted] = useState(false)
     const [updating, setUpdating] = useState(false)
     const [user, setUser] = useState(JSON.parse(JSON.stringify(props.user)))
 
     const [error, setError] = useState(null)
-    function handleErrors(response) {
+    function handleErrors(response, errorMessage) {
         if (!response.ok) {
-            setError("Unable to retrieve request")
+            setError(errorMessage)
         }
         return response;
     }
 
     function deleteUser() {
         fetch("./api/v1/user/"+props.user.user_id, {method:"DELETE"})
-            .then(handleErrors)
-            .then(response => console.log("ok") )
+            .then((resp)=>handleErrors(resp, "Unable to delete user"))
+            .then(() => setIsDeleted(true) )
             .catch(error => setError(error) );
     }
 
@@ -27,7 +28,7 @@ function User(props) {
             method:"POST",
             body: JSON.stringify(user)
         })
-            .then(handleErrors)
+            .then((resp)=>handleErrors(resp, "Unable to update roles"))
             .then(response => setUpdating(false) )
             .catch(error => setError(error) );
     }
@@ -44,6 +45,7 @@ function User(props) {
     }
 
     return (
+        !isDeleted &&
         <div>
             {user.name}
             <div className="roles">
