@@ -111,6 +111,7 @@ func GetAllRoles(db *database.DB) gin.HandlerFunc {
 		c.JSON(200, roles)
 	}
 }
+
 func getPermissions(roleID int, db *database.DB) (error, map[string]authorization.Resource){
 	resourceMap := make(map[string]authorization.Resource)
 	resourceRows, err := db.Db.Query(`SELECT resource.resource_id, resource.resource_name, can_add, can_delete, can_view, can_edit FROM resource 
@@ -161,8 +162,11 @@ func UpdateRole(db *database.DB) gin.HandlerFunc {
 		}
 
 		for _, resourceDetails := range role.Resources {
-			row = db.Db.QueryRow(`UPDATE role_resource_bridge SET can_add=$1, can_view=$2, 
-                                can_edit=$3, can_delete=$4, resource_id=$5 WHERE role_id=$6`,
+			row = db.Db.QueryRow(`INSERT INTO role_resource_bridge (can_add, can_view, can_edit, can_delete, resource_id, role_id) 
+																		VALUES ($1, $2, $3, $4, $5, $6)
+										ON CONFLICT (resource_id, role_id) 
+										    DO UPDATE SET can_add=$1, can_view=$2, can_edit=$3, can_delete=$4 
+										WHERE role_resource_bridge.resource_id=$5 AND role_resource_bridge.role_id=$6`,
 				resourceDetails.Policy.CanAdd, resourceDetails.Policy.CanView,
 				resourceDetails.Policy.CanEdit, resourceDetails.Policy.CanDelete,
 				resourceDetails.ResourceID, role.ID)
