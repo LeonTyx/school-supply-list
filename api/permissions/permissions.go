@@ -78,6 +78,11 @@ func GetRole(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
+		err, role.Resources = getPermissions(role.ID, db)
+		if err != nil{
+			c.AbortWithStatusJSON(500, "Unable to retrieve permissions for this role")
+		}
+
 		c.JSON(200, role)
 	}
 }
@@ -95,11 +100,39 @@ func GetAllRoles(db *database.DB) gin.HandlerFunc {
 			err = rows.Scan(&role.ID, &role.Name, &role.Desc)
 			if err != nil {
 				database.CheckDBErr(err.(*pq.Error), c)
+				return
+			}
+			err, role.Resources = getPermissions(role.ID, db)
+			if err != nil{
+				c.AbortWithStatusJSON(500, "Unable to retrieve permissions for this role")
 			}
 			roles[role.ID] = role;
 		}
 		c.JSON(200, roles)
 	}
+}
+func getPermissions(roleID int, db *database.DB) (error, map[string]authorization.Resource){
+	resourceMap := make(map[string]authorization.Resource)
+	resourceRows, err := db.Db.Query(`SELECT resource.resource_id, resource.resource_name, can_add, can_delete, can_view, can_edit FROM resource 
+    								JOIN role_resource_bridge rrb on resource.resource_id = rrb.resource_id
+    								WHERE rrb.role_id=$1`, roleID)
+	if err != nil {
+		return err.(*pq.Error), resourceMap
+	}
+
+	for resourceRows.Next(){
+		var resource authorization.Resource
+		var resourceName string
+		err = resourceRows.Scan(&resource.ResourceID, &resourceName, &resource.Policy.CanAdd,
+			&resource.Policy.CanDelete, &resource.Policy.CanView, &resource.Policy.CanEdit)
+
+		if err != nil {
+			return err.(*pq.Error), resourceMap
+		}
+		resourceMap[resourceName] = resource
+	}
+
+	return nil, resourceMap
 }
 
 func UpdateRole(db *database.DB) gin.HandlerFunc {
