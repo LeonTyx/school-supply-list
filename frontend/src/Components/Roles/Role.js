@@ -21,9 +21,10 @@ function Role(props) {
     }
 
     function updateRole(){
+        setUpdating(true)
         fetch("./api/v1/role/"+props.role.id, {method:"POST", body: JSON.stringify(role)})
             .then((resp)=>handleErrors(resp, "Unable to update role"))
-            .then(() => setIsDeleted(true) )
+            .then(() => setUpdating(false) )
             .catch(error => setError(error) );
     }
 

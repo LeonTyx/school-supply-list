@@ -18,7 +18,7 @@ function User(props) {
     function deleteUser() {
         fetch("./api/v1/user/"+props.user.user_id, {method:"DELETE"})
             .then((resp)=>handleErrors(resp, "Unable to delete user"))
-            .then(() => setIsDeleted(true) )
+            .then(() => setIsDeleted(true))
             .catch(error => setError(error) );
     }
 
