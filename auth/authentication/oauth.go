@@ -262,7 +262,7 @@ type Account struct {
 
 func refreshSession(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session, err := db.SessionStore.Get(c.Request, "session")
+		session, err := db.SessionStore.Get(c.Request,  "session")
 		if err != nil {
 			c.AbortWithStatusJSON(500, "The server was unable to retrieve this session")
 			return

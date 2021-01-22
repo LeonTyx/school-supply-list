@@ -15,8 +15,8 @@ function App() {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        // Refresh session every 15 minutes
-        setInterval(refreshSession, 900000)
+        // Refresh session every 10 minutes
+        setInterval(refreshSession, 600000)
         // Listen to localstorage changes
         // Update user on change
         window.addEventListener('storage', () => {

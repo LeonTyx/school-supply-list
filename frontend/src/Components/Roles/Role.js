@@ -1,14 +1,38 @@
 import React, {useState} from 'react';
+import Error from "../Error/Error";
 
 function Role(props) {
     const [role, setRole] = useState(Object.assign({}, props.role))
+    const [updating, setUpdating] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
 
-    function updatePolicy(resource, policyID){
+    const [error, setError] = useState(null)
+    function handleErrors(response, errorMessage) {
+        if (!response.ok) {
+            setError(errorMessage)
+        }
+        return response;
+    }
+
+    function onTogglePolicy(resource, policyID){
         let roleCopy = Object.assign({}, props.role)
         role.resources[resource].policy[policyID] = !role.resources[resource].policy[policyID]
         setRole(roleCopy)
     }
 
+    function updateRole(){
+        fetch("./api/v1/role/"+props.role.id, {method:"POST", body: JSON.stringify(role)})
+            .then((resp)=>handleErrors(resp, "Unable to update role"))
+            .then(() => setIsDeleted(true) )
+            .catch(error => setError(error) );
+    }
+
+    function deleteRole(){
+        fetch("./api/v1/role/"+props.role.id, {method:"DELETE"})
+            .then((resp)=>handleErrors(resp, "Unable to delete role"))
+            .then(() => setIsDeleted(true) )
+            .catch(error => setError(error) );
+    }
     return (
         <div>
             <h3>{role.name}</h3>
@@ -18,19 +42,26 @@ function Role(props) {
                     <div>
                         <input type="checkbox"
                                checked={role.resources[resourceKey].policy.can_add}
-                               onChange={()=>updatePolicy(resourceKey, "can_add")}/>
+                               onChange={()=>onTogglePolicy(resourceKey, "can_add")}/>
                         <input type="checkbox"
                                checked={role.resources[resourceKey].policy.can_view}
-                               onChange={()=>updatePolicy(resourceKey, "can_view")}/>
+                               onChange={()=>onTogglePolicy(resourceKey, "can_view")}/>
                         <input type="checkbox"
                                checked={role.resources[resourceKey].policy.can_edit}
-                               onChange={()=>updatePolicy(resourceKey, "can_edit")}/>
+                               onChange={()=>onTogglePolicy(resourceKey, "can_edit")}/>
                         <input type="checkbox"
                                checked={role.resources[resourceKey].policy.can_delete}
-                               onChange={()=>updatePolicy(resourceKey, "can_delete")}/>
+                               onChange={()=>onTogglePolicy(resourceKey, "can_delete")}/>
                     </div>
                 </div>
             )}
+            {updating ? (
+                <button disabled={true}>Saving</button>
+            ) : (
+                <button onClick={updateRole}>Save Changes</button>
+            )}
+            <button onClick={deleteRole}>Delete Role</button>
+            {error !== null && <Error error_msg_str={error}/>}
         </div>
     );
 

@@ -152,9 +152,9 @@ func UpdateRole(db *database.DB) gin.HandlerFunc {
 		}
 
 		row := db.Db.QueryRow(`UPDATE role SET role_name=$1, role_desc=$2
-	   		where role_id=$3 returning role_id, role_name, role_desc`, role.Name, role.Desc)
+	   		where role_id=$3 returning role_id, role_name, role_desc`, role.Name, role.Desc, role.ID)
 		//Scan the latest changes into the role struct
-		err = row.Scan(&role.ID, &role.Name, role.Desc)
+		err = row.Scan(&role.ID, &role.Name, &role.Desc)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
@@ -167,7 +167,7 @@ func UpdateRole(db *database.DB) gin.HandlerFunc {
 				resourceDetails.Policy.CanEdit, resourceDetails.Policy.CanDelete,
 				resourceDetails.ResourceID, role.ID)
 			if row.Err() != nil {
-				database.CheckDBErr(err.(*pq.Error), c)
+				database.CheckDBErr(row.Err().(*pq.Error), c)
 				return
 			}
 		}
