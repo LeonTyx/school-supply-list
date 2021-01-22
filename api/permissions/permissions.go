@@ -1,7 +1,7 @@
 package permissions
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/auth/authorization"
@@ -31,11 +31,12 @@ func GetAllResources(db *database.DB) gin.HandlerFunc {
 func CreateRole(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var role authorization.Role
-		err := json.NewDecoder(c.Request.Body).Decode(&role)
+		err := c.BindJSON(&role)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
 		}
+
 		row := db.Db.QueryRow(`INSERT INTO role (role_name, role_desc) 
 		  VALUES ($1, $2) RETURNING role_id`, role.Name, role.Desc)
 		err = row.Scan(&role.ID)

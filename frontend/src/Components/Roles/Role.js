@@ -35,6 +35,7 @@ function Role(props) {
             .catch(error => setError(error) );
     }
     return (
+        !isDeleted &&
         <div>
             <h3>{role.name}</h3>
             {role.resources != null &&

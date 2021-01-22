@@ -24,7 +24,7 @@ func Routes(r *gin.RouterGroup, db *database.DB) {
 
 func resourceRoute(r *gin.RouterGroup, db *database.DB) {
 	r.GET("/resource",
-		authorization.LoadPolicy(db, "resources"),
+		authorization.LoadPolicy(db, "role"),
 		authorization.CanView(),
 		permissions.GetAllResources(db))
 }
