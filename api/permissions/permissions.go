@@ -1,7 +1,6 @@
 package permissions
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/auth/authorization"
