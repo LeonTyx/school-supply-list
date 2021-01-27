@@ -7,9 +7,9 @@ function Navbar() {
     const [user] = useContext(userSession)
 
     let canView = (key) => {
-        if(user !== null && user !== undefined) {
+        if (user !== null && user !== undefined) {
             let resc = user.consolidated_resources
-            if(resc[key] !== undefined && resc[key].policy.can_view){
+            if (resc[key] !== undefined && resc[key].policy.can_view) {
                 return true
             }
         }
@@ -20,12 +20,12 @@ function Navbar() {
         <nav>
             <NavLink to="/" exact activeClassName="active">Home</NavLink>
             <React.Fragment>
-                {canView("user") &&
-                <NavLink to="/users" activeClassName="active">Users</NavLink>
-                }
-                {canView("role") !== undefined &&
-                <NavLink to="/roles" activeClassName="active">Roles</NavLink>
-                }
+                {canView("user") && <NavLink to="/users" activeClassName="active">
+                    Users
+                </NavLink>}
+                {canView("role") && <NavLink to="/roles" activeClassName="active">
+                    Roles
+                </NavLink>}
             </React.Fragment>
         </nav>
     );
