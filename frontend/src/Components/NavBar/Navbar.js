@@ -5,26 +5,28 @@ import {userSession} from "../../UserSession";
 
 function Navbar() {
     const [user] = useContext(userSession)
-    let userResources = () => {
+
+    let canView = (key) => {
         if(user !== null && user !== undefined) {
-            return user.consolidated_resources
+            let resc = user.consolidated_resources
+            if(resc[key] !== undefined && resc[key].policy.can_view){
+                return true
+            }
         }
-        return undefined
+        return false
     }
 
     return (
         <nav>
             <NavLink to="/" exact activeClassName="active">Home</NavLink>
-            {userResources() !== undefined &&
             <React.Fragment>
-                {userResources.user.policy.can_view !== undefined &&
+                {canView("user") &&
                 <NavLink to="/users" activeClassName="active">Users</NavLink>
                 }
-                {userResources.user.policy.can_view !== undefined &&
+                {canView("role") !== undefined &&
                 <NavLink to="/roles" activeClassName="active">Roles</NavLink>
                 }
             </React.Fragment>
-            }
         </nav>
     );
 
