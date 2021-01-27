@@ -8,16 +8,18 @@ function Roles() {
     const [resources, setResources] = useState(null);
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
         }
         return response.json();
     }
+
     useEffect(() => {
         //Fetch roles from api
         fetch("/api/v1/role")
-            .then((resp)=>handleErrors(resp, "Unable to retrieve roles"))
+            .then((resp) => handleErrors(resp, "Unable to retrieve roles"))
             .then(
                 (result) => {
                     setRoles(result);
@@ -28,7 +30,7 @@ function Roles() {
             )
 
         fetch("/api/v1/resource")
-            .then((resp)=>handleErrors(resp, "Unable to retrieve resources"))
+            .then((resp) => handleErrors(resp, "Unable to retrieve resources"))
             .then(
                 (result) => {
                     setResources(result);

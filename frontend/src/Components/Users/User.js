@@ -8,6 +8,7 @@ function User(props) {
     const [user, setUser] = useState(JSON.parse(JSON.stringify(props.user)))
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -16,21 +17,21 @@ function User(props) {
     }
 
     function deleteUser() {
-        fetch("./api/v1/user/"+props.user.user_id, {method:"DELETE"})
-            .then((resp)=>handleErrors(resp, "Unable to delete user"))
+        fetch("./api/v1/user/" + props.user.user_id, {method: "DELETE"})
+            .then((resp) => handleErrors(resp, "Unable to delete user"))
             .then(() => setIsDeleted(true))
-            .catch(error => setError(error) );
+            .catch(error => setError(error));
     }
 
     function updateRoles() {
         setUpdating(true)
-        fetch("./api/v1/user/"+ props.user.user_id, {
-            method:"POST",
+        fetch("./api/v1/user/" + props.user.user_id, {
+            method: "POST",
             body: JSON.stringify(user)
         })
-            .then((resp)=>handleErrors(resp, "Unable to update roles"))
-            .then(response => setUpdating(false) )
-            .catch(error => setError(error) );
+            .then((resp) => handleErrors(resp, "Unable to update roles"))
+            .then(response => setUpdating(false))
+            .catch(error => setError(error));
     }
 
     function updateCheckBox(id) {
@@ -61,7 +62,7 @@ function User(props) {
             {updating ? (
                 <button disabled={true}>Saving</button>
             ) : (
-                <button onClick={updateRoles} >Save Changes</button>
+                <button onClick={updateRoles}>Save Changes</button>
             )}
             <button onClick={deleteUser}>Delete</button>
             {error != null && <Error error_msg_str={error}/>}

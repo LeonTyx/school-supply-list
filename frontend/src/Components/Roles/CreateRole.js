@@ -8,6 +8,7 @@ function CreateRole(props) {
     const [roleResources, setRoleResources] = useState(Object.assign({}, props.resources))
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -16,72 +17,90 @@ function CreateRole(props) {
     }
 
 
-    function updateResources(resourceKey, policyKey){
+    function updateResources(resourceKey, policyKey) {
         let resourceCopy = Object.assign({}, props.resources)
         resourceCopy[resourceKey].policy[policyKey] = !resourceCopy[resourceKey].policy[policyKey]
 
         setRoleResources(resourceCopy)
     }
 
-    function submitForm(){
+    function submitForm() {
         setUpdating(true)
         fetch("/api/v1/role/", {
-            method:"PUT",
+            method: "PUT",
             body: JSON.stringify({
                 "name": roleName,
                 "desc": roleDesc,
                 "resources": roleResources
             })
         })
-            .then((resp)=>handleErrors(resp, "Unable to create role"))
-            .then(response => setUpdating(false) )
-            .catch(error => setError(error) );
+            .then((resp) => handleErrors(resp, "Unable to create role"))
+            .then(response => {
+                setRoleName("")
+                setRoleDesc("")
+                setRoleResources(Object.assign({}, props.resources))
+                setUpdating(false)
+            })
+            .catch(error => setError(error));
     }
 
     return (
-        <form className="create-role" onSubmit={(e)=>e.preventDefault()}>
+        error === null &&
+        <form className="create-role" onSubmit={(e) => e.preventDefault()}>
             <h2>Create Role</h2>
             <label>
                 Role name
                 <input value={roleName}
-                       onChange={(e)=>{setRoleName(e.target.value)}}/>
+                       onChange={(e) => {
+                           setRoleName(e.target.value)
+                       }}/>
             </label>
 
             <label>
                 Role description
                 <textarea value={roleDesc}
-                          onChange={(e)=>{setRoleDesc(e.target.value)}}/>
+                          onChange={(e) => {
+                              setRoleDesc(e.target.value)
+                          }}/>
             </label>
 
             <div className="resources">
                 Resources
 
-                {Object.keys(roleResources).map((key)=>
+                {Object.keys(roleResources).map((key) =>
                     <div className="policy" key={key}>
                         <div className="resource">{key}</div>
                         <label>
                             <input type="checkbox" checked={roleResources[key].policy.can_add}
-                                   onChange={()=>{updateResources(key, "can_add")}}/>
+                                   onChange={() => {
+                                       updateResources(key, "can_add")
+                                   }}/>
                             Create
                         </label>
 
                         <label>
                             <input type="checkbox" checked={roleResources[key].policy.can_view}
-                                   onChange={()=>{updateResources(key, "can_view")}}/>
+                                   onChange={() => {
+                                       updateResources(key, "can_view")
+                                   }}/>
 
                             Read
                         </label>
 
                         <label>
                             <input type="checkbox" checked={roleResources[key].policy.can_edit}
-                                   onChange={()=>{updateResources(key, "can_edit")}}/>
+                                   onChange={() => {
+                                       updateResources(key, "can_edit")
+                                   }}/>
 
                             Update
                         </label>
 
                         <label>
                             <input type="checkbox" checked={roleResources[key].policy.can_delete}
-                                   onChange={()=>{updateResources(key, "can_delete")}}/>
+                                   onChange={() => {
+                                       updateResources(key, "can_delete")
+                                   }}/>
 
                             Delete
                         </label>

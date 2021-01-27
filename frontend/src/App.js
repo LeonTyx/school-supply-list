@@ -51,6 +51,16 @@ function App() {
             })
     }
 
+    let canView = (key) => {
+        if (user !== undefined && user !== null) {
+            let resc = user.consolidated_resources
+            if (resc[key] !== undefined && resc[key].policy.can_view) {
+                return true
+            }
+        }
+        return false
+    }
+
     return (
         error === null ? (
             <HashRouter>
@@ -59,23 +69,16 @@ function App() {
                     <main>
                         <Route exact path="/" component={Home}/>
                         <Route path="/list/:id" component={SupplyList}/>
-                        {user !== null && user !== undefined && user.consolidated_resources !== undefined && (
-                            <React.Fragment>
-                                <Route exact path="/account" component={Account}/>
-                                {user.consolidated_resources.user !== undefined && (
-                                    user.consolidated_resources.user.policy.can_view && (
-                                        <Route exact path="/users" component={Users}/>
-                                    )
-                                )}
-
-                                {user.consolidated_resources.role !== undefined && (
-                                    user.consolidated_resources.role.policy.can_view && (
-                                        <Route exact path="/roles" component={Roles}/>
-                                    )
-                                )}
-                            </React.Fragment>
+                        {user != null && (
+                            <Route exact path="/account" component={Account}/>
+                        )}
+                        {canView("user") && (
+                            <Route exact path="/users" component={Users}/>
                         )}
 
+                        {canView("role") && (
+                            <Route exact path="/roles" component={Roles}/>
+                        )}
                     </main>
                     <Navbar/>
                 </userSession.Provider>

@@ -7,7 +7,7 @@ function Navbar() {
     const [user] = useContext(userSession)
 
     let canView = (key) => {
-        if (user !== null && user !== undefined) {
+        if (user !== undefined && user !== null) {
             let resc = user.consolidated_resources
             if (resc[key] !== undefined && resc[key].policy.can_view) {
                 return true
