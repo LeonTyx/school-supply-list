@@ -36,7 +36,11 @@ function CreateSchool() {
         error === null &&
         canCreate("school", user) && (
             <form onSubmit={(e) => e.preventDefault()}>
-                <input value={schoolName} onChange={(e)=>setSchoolName(e.target.value)}/>
+                <h2>Create School</h2>
+                <label>
+                    School Name
+                    <input value={schoolName} onChange={(e)=>setSchoolName(e.target.value)}/>
+                </label>
                 {updating ? (
                     <button disabled={true}>Updating</button>
                 ) : (
