@@ -28,11 +28,11 @@ function Home() {
     }, [])
 
     return (
-        error === null && schools !== null &&
+        error === null &&
         <div className="home">
             <section className="schools">
-                {schools.map((school) =>
-                    <SchoolCard school={school}/>
+                {schools !== null && schools.map((school) =>
+                    <SchoolCard key={school.school_id} school={school}/>
                 )}
             </section>
 
