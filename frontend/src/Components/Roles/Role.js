@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import Error from "../Error/Error";
+import DisplayError from "../Error/DisplayError";
 
 function Role(props) {
     const [role, setRole] = useState(Object.assign({}, props.role))
@@ -65,7 +65,7 @@ function Role(props) {
                 <button onClick={updateRole}>Save Changes</button>
             )}
             <button onClick={deleteRole}>Delete Role</button>
-            {error !== null && <Error error_msg_str={error}/>}
+            {error !== null && <DisplayError error_msg_str={error}/>}
         </div>
     );
 

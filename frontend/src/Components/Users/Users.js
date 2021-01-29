@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './Users.scss'
-import Error from "../Error/Error";
+import DisplayError from "../Error/DisplayError";
 import User from "./User";
 
 function Users() {
@@ -53,7 +53,7 @@ function Users() {
                 )}
             </div>
         ) : (
-            <Error error_msg_str={error}/>
+            <DisplayError error_msg_str={error}/>
         )
     );
 }

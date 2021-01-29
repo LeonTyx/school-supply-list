@@ -6,9 +6,10 @@ import {HashRouter, Route} from "react-router-dom"
 import SupplyList from "./Components/Supply List/SupplyList";
 import Account from "./Components/Account/Account";
 import Users from "./Components/Users/Users";
-import Error from "./Components/Error/Error";
+import DisplayError from "./Components/Error/DisplayError";
 import Navbar from "./Components/NavBar/Navbar";
 import Roles from "./Components/Roles/Roles";
+import {canView} from "./Components/Permissions/Permissions";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -51,16 +52,6 @@ function App() {
             })
     }
 
-    let canView = (key) => {
-        if (user !== undefined && user !== null) {
-            let resc = user.consolidated_resources
-            if (resc[key] !== undefined && resc[key].policy.can_view) {
-                return true
-            }
-        }
-        return false
-    }
-
     return (
         error === null ? (
             <HashRouter>
@@ -72,11 +63,11 @@ function App() {
                         {user != null && (
                             <Route exact path="/account" component={Account}/>
                         )}
-                        {canView("user") && (
+                        {canView("user", user) && (
                             <Route exact path="/users" component={Users}/>
                         )}
 
-                        {canView("role") && (
+                        {canView("role", user) && (
                             <Route exact path="/roles" component={Roles}/>
                         )}
                     </main>
@@ -84,9 +75,8 @@ function App() {
                 </userSession.Provider>
             </HashRouter>
         ) : (
-            <Error error_msg_str={"Error!"}/>
+            <DisplayError msg={"DisplayError!"}/>
         )
     );
 }
-
 export default App

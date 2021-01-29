@@ -1,13 +1,13 @@
 import React from 'react';
 import './Error.scss'
 
-function Error(props) {
+function DisplayError(props) {
     return (
         <div className="error-message-prompt">
-            {props.error_msg_str}
+            {props.msg}
         </div>
     );
 
 }
 
-export default Error;
+export default DisplayError;
