@@ -55,8 +55,6 @@ func listRoutes(r *gin.RouterGroup, db *database.DB) {
 		supplylist.CreateSupplyList(db))
 	r.GET("/supply-list/:id",
 		supplylist.GetSupplyList(db))
-	r.GET("/supply-lists",
-		supplylist.GetSupplyLists(db))
 	r.POST("/supply-list/:id", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanEdit(),

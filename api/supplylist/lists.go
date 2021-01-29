@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-type supplyList struct {
+type SupplyList struct {
 	ListID              int                              `json:"list_id"`
 	Grade               int                              `json:"grade"`
 	SchoolID            int                              `json:"school_id"`
@@ -21,7 +21,7 @@ type supplyList struct {
 
 func CreateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var list supplyList
+		var list SupplyList
 		err := json.NewDecoder(c.Request.Body).Decode(&list)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
@@ -47,7 +47,7 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
 			return
 		}
-		list := supplyList{
+		list := SupplyList{
 			ListID: id,
 		}
 
@@ -98,23 +98,6 @@ func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string
 	return basicSupplies, categorizedSupplies, nil
 }
 
-func GetSupplyLists(db *database.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var lists []supplyList
-		rows, err := db.Db.Query(`SELECT grade, list_name, school_id from supply_list`)
-		if err != nil {
-			database.CheckDBErr(err.(*pq.Error), c)
-			return
-		}
-		for rows.Next() {
-			var list supplyList
-			err = rows.Scan(&list.Grade, &list.ListName, &list.SchoolID)
-			lists = append(lists, list)
-		}
-		c.JSON(200, lists)
-	}
-}
-
 func UpdateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
@@ -123,7 +106,7 @@ func UpdateSupplyList(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
 			return
 		}
-		var list supplyList
+		var list SupplyList
 		err = json.NewDecoder(c.Request.Body).Decode(&list)
 
 		list.ListID = id

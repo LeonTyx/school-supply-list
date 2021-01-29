@@ -9,6 +9,7 @@ import Users from "./Components/Users/Users";
 import DisplayError from "./Components/Error/DisplayError";
 import Navbar from "./Components/NavBar/Navbar";
 import Roles from "./Components/Roles/Roles";
+import School from "./Components/School/School";
 import {canView} from "./Components/Permissions/Permissions";
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
                         {canView("role", user) && (
                             <Route exact path="/roles" component={Roles}/>
                         )}
+                        <Route path="/school/:id" component={School}/>
                     </main>
                     <Navbar/>
                 </userSession.Provider>

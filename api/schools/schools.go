@@ -3,6 +3,7 @@ package schools
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
+	"school-supply-list/api/supplylist"
 	"school-supply-list/database"
 	"strconv"
 )
@@ -31,6 +32,12 @@ func CreateSchool(db *database.DB) gin.HandlerFunc {
 	}
 }
 
+type schoolWithList struct {
+	SchoolID   int                     `json:"school_id"`
+	SchoolName string                  `json:"school_name"`
+	SupplyList []supplylist.SupplyList `json:"supply_lists"`
+}
+
 func GetSchool(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
@@ -39,22 +46,37 @@ func GetSchool(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer")
 			return
 		}
-		school := school{
-			SchoolID: id,
-		}
 
-		schoolRows, err := db.Db.Query(`SELECT school_name from school 
+		var school schoolWithList
+		schoolRows, err := db.Db.Query(`SELECT school_name, school_id from school 
 											where school.school_id=$1`, id)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
-
+		rowcount := 0
 		for schoolRows.Next() {
-			err = schoolRows.Scan(&school.SchoolName)
+			err = schoolRows.Scan(&school.SchoolName, &school.SchoolID)
 			if err != nil {
 				c.AbortWithStatusJSON(500, "The server was unable to retrieve school info")
+				return
 			}
+			rowcount ++
+		}
+		if rowcount == 0{
+			c.AbortWithStatusJSON(404, "This school does not exist")
+			return
+		}
+
+		listRows, err := db.Db.Query(`SELECT grade, list_name, school_id from supply_list`)
+		if err != nil {
+			database.CheckDBErr(err.(*pq.Error), c)
+			return
+		}
+		for listRows.Next() {
+			var list supplylist.SupplyList
+			err = listRows.Scan(&list.Grade, &list.ListName, &list.SchoolID)
+			school.SupplyList = append(school.SupplyList, list)
 		}
 
 		c.JSON(200, school)
@@ -76,6 +98,7 @@ func GetSchools(db *database.DB) gin.HandlerFunc {
 			if err != nil {
 				c.AbortWithStatusJSON(500, "The server was unable to retrieve school info")
 			}
+
 			schools = append(schools, school)
 		}
 

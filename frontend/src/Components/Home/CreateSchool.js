@@ -13,7 +13,7 @@ function CreateSchool() {
         if (!response.ok) {
             setError(errorMessage)
         }
-        return response;
+        return response.json();
     }
 
     function submitForm() {

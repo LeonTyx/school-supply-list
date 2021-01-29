@@ -1,6 +1,9 @@
 function canCreate(resource, user){
     if (user !== undefined && user !== null) {
         let resc = user.consolidated_resources
+        if(resc === undefined){
+            return false;
+        }
         if (resc[resource] !== undefined && resc[resource].policy.can_view) {
             return true
         }
