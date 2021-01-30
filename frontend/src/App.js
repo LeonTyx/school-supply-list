@@ -72,6 +72,7 @@ function App() {
                             <Route exact path="/roles" component={Roles}/>
                         )}
                         <Route path="/school/:id" component={School}/>
+                        <Route path="/supply-list/:id" component={SupplyList}/>
                     </main>
                     <Navbar/>
                 </userSession.Provider>

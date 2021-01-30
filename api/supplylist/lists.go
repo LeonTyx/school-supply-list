@@ -51,13 +51,27 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 			ListID: id,
 		}
 
-		row := db.Db.QueryRow(`SELECT grade, list_name, published, school_id from supply_list 
+		rowCount := -1
+		rows, err := db.Db.Query(`SELECT grade, list_name, published, school_id from supply_list 
 											where supply_list.list_id=$1`, id)
-		err = row.Scan(&list.Grade, &list.ListName, &list.SchoolID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
+		for rows.Next(){
+			err = rows.Scan(&list.Grade, &list.ListName, &list.SchoolID)
+			if err != nil {
+				database.CheckDBErr(err.(*pq.Error), c)
+				return
+			}
+			rowCount ++
+		}
+
+		if rowCount == -1{
+			c.AbortWithStatusJSON(404, "This resource does not exist")
+			return
+		}
+
 		list.BasicSupplies, list.CategorizedSupplies, err = getItemsForList(list.ListID, db)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
