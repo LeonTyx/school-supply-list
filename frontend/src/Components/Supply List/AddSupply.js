@@ -2,7 +2,7 @@ import React,{useState, useContext} from 'react';
 import {canCreate} from "../Permissions/Permissions";
 import {userSession} from "../../UserSession";
 
-function AddSupply() {
+function AddSupply(props) {
     const [supplyName, setSupplyName] = useState("")
     const [supplyDesc, setSupplyDesc] = useState("")
     const [submitting, setSubmitting] = useState(false)
@@ -20,6 +20,7 @@ function AddSupply() {
         fetch("/api/v1/supply", {
             method: "PUT",
             body: JSON.stringify({
+                "list_id": props.listID,
                 "supply": supplyName,
                 "desc": supplyDesc,
             })

@@ -53,8 +53,8 @@ function SupplyItem(props) {
     return (
         !deleted &&
         <div className="supply-item">
-            <div className="supply-name">{props.list.supply}</div>
-            <div className="supply-desc">{props.list.supply}</div>
+            <div className="supply-name">{props.supply.supply}</div>
+            <div className="supply-desc">{props.supply.desc}</div>
 
             {editing ? (
                 <button disabled={true}>Editing...</button>

@@ -20,7 +20,7 @@ type SupplyItem struct {
 func CreateSupply(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var supply SupplyItem
-		err := json.NewDecoder(c.Request.Body).Decode(&supply)
+		err := c.BindJSON(&supply)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return

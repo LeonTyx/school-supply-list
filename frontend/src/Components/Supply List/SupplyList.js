@@ -35,9 +35,9 @@ function SupplyList(props) {
         <div className="supply-list">
             {list["basic_supplies"] != null &&
             list["basic_supplies"].map((supply) =>
-                <SupplyItem supply={supply}/>
+                <SupplyItem key={supply.id} supply={supply}/>
             )}
-            <AddSupply/>
+            <AddSupply listID={list.list_id}/>
         </div>
         ) : (
             <DisplayError msg={error}/>

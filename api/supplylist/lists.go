@@ -2,7 +2,6 @@ package supplylist
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/api/supplies"
@@ -62,7 +61,6 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 		for rows.Next(){
 			err = rows.Scan(&list.ListID, &list.Grade, &list.ListName, &list.SchoolID)
 			if err != nil {
-				fmt.Println(err)
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}
@@ -86,10 +84,9 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 
 func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string][]supplies.SupplyItem, error) {
 	var basicSupplies []supplies.SupplyItem
+	rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc, category FROM supply_item sup 
+										WHERE list_id = $1`, id)
 	categorizedSupplies := make(map[string][]supplies.SupplyItem)
-	rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc, ilb.category FROM supply_item sup 
-										INNER JOIN item_list_bridge ilb on sup.id = ilb.item_id
-										WHERE ilb.list_id = $1`, id)
 	if err != nil {
 		return basicSupplies, categorizedSupplies, err
 	}
@@ -97,7 +94,6 @@ func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string
 		var supply supplies.SupplyItem
 
 		err = rows.Scan(&supply.ID, &supply.Supply, &supply.Desc, &supply.Category)
-		basicSupplies = append(basicSupplies, supply)
 
 		// Check if item is categorized
 		if supply.Category.Valid {
