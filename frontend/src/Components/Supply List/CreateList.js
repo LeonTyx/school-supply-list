@@ -1,11 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import './CreateList.scss'
 import DisplayError from "../Error/DisplayError";
+import {userSession} from "../../UserSession";
+import {canCreate} from "../Permissions/Permissions";
 
 function CreateList(props) {
     const [title, setTitle] = useState("")
     const [grade, setGrade] = useState("")
     const [submitting, setSubmitting] = useState(false)
+    const [user] = useContext(userSession)
 
     const [error, setError] = useState(null)
     function handleErrors(response, errorMessage) {
@@ -36,6 +39,7 @@ function CreateList(props) {
     }
 
     return (
+        canCreate("supply-list", user) &&
         <form className="create-list" onSubmit={(e) => e.preventDefault()}>
             Create List
             <label>
