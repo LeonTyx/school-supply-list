@@ -25,7 +25,7 @@ function AddSupply() {
             })
         })
             .then((resp) => handleErrors(resp, "Unable to add supply. Try again later."))
-            .then(response => {
+            .then(() => {
                 setSupplyName("")
                 setSupplyDesc("")
                 setSubmitting(false)
@@ -35,14 +35,14 @@ function AddSupply() {
 
     return (
         canCreate("supply", user) &&
-        <form>
+        <form onSubmit={(e) => e.preventDefault()}>
             <label>
                 <input value={supplyName} onChange={(e)=>setSupplyName(e.target.value)}/>
             </label>
             <label>
                 <textarea value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
             </label>
-            
+
             <button onClick={addSupply}>Add</button>
         </form>
     );
