@@ -3,8 +3,8 @@ import './SupplyItem.scss'
 import DisplayError from "../Error/DisplayError";
 
 function SupplyItem(props) {
-    const [supplyName, setSupplyName] = useState("")
-    const [supplyDesc, setSupplyDesc] = useState("")
+    const [supplyName, setSupplyName] = useState(props.supply.supply)
+    const [supplyDesc, setSupplyDesc] = useState(props.supply.desc)
     const [editing, setEditing] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [deleted, setDeleted] = useState(false)
@@ -20,7 +20,7 @@ function SupplyItem(props) {
     function editItem(){
         setEditing(true)
 
-        fetch("/api/v1/supply/" + props.match.params.id, {
+        fetch("/api/v1/supply/" + props.supply.id, {
             method: "POST",
             body: JSON.stringify({
                 "school_id": supplyName,
@@ -39,7 +39,7 @@ function SupplyItem(props) {
     function deleteItem(){
         setDeleting(true)
 
-        fetch("/api/v1/supply/" + props.match.params.id, {
+        fetch("/api/v1/supply/" + props.supply.id, {
             method: "DELETE",
         })
             .then((resp) => handleErrors(resp, "Unable to create list. Try again later."))
