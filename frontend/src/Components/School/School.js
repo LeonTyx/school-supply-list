@@ -1,6 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './School.scss'
 import DisplayError from "../Error/DisplayError";
+import CreateList from "../Supply List/CreateList";
+import {Link} from "react-router-dom";
 
 function School(props) {
     const [school, setSchool] = useState(null)
@@ -12,7 +14,7 @@ function School(props) {
         }
         return response.json();
     }
-
+    console.log(props.match.params.id)
     useEffect(() => {
         //Fetch school from api
         fetch("/api/v1/school/" + props.match.params.id)
@@ -27,6 +29,7 @@ function School(props) {
             )
 
     }, [props.match.params.id])
+
     return (
         error == null ? (
             school != null && <div className="school">
@@ -34,13 +37,15 @@ function School(props) {
                     <h2>{school.school_name}</h2>
                 </div>
                 <div className="supply-lists">
-                    {school.supply_list != null ? (
+                    {school.supply_lists != null ? (
                         school.supply_lists.map((list) =>
-                                <div>List goes here</div>
+                                <Link to={"/supply-list/"+list.list_id}>{list.list_name}</Link>
                             )
-                    ): (
+                    ) : (
                         <div>No lists yet!</div>
                     )}
+
+                    <CreateList schoolID={parseInt(props.match.params.id)}/>
                 </div>
             </div>
         ):(

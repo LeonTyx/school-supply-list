@@ -2,6 +2,7 @@ package supplylist
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/api/supplies"
@@ -22,13 +23,13 @@ type SupplyList struct {
 func CreateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var list SupplyList
-		err := json.NewDecoder(c.Request.Body).Decode(&list)
+		err := c.BindJSON(&list)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
 		}
 		row := db.Db.QueryRow(`INSERT INTO supply_list (grade, list_name, school_id, published, list_id) 
-		  VALUES ($1, $2, $3, $4, default) returning list_id`, list.Grade, list.ListName, list.ListID, list.Published)
+		  VALUES ($1, $2, $3, false, default) returning list_id`, list.Grade, list.ListName, list.SchoolID)
 		err = row.Scan(&list.ListID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
@@ -52,15 +53,16 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 		}
 
 		rowCount := -1
-		rows, err := db.Db.Query(`SELECT grade, list_name, published, school_id from supply_list 
+		rows, err := db.Db.Query(`SELECT list_id, grade, list_name, school_id from supply_list 
 											where supply_list.list_id=$1`, id)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
 		for rows.Next(){
-			err = rows.Scan(&list.Grade, &list.ListName, &list.SchoolID)
+			err = rows.Scan(&list.ListID, &list.Grade, &list.ListName, &list.SchoolID)
 			if err != nil {
+				fmt.Println(err)
 				database.CheckDBErr(err.(*pq.Error), c)
 				return
 			}

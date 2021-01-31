@@ -3,7 +3,6 @@ package schools
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
-	"school-supply-list/api/supplylist"
 	"school-supply-list/database"
 	"strconv"
 )
@@ -33,9 +32,16 @@ func CreateSchool(db *database.DB) gin.HandlerFunc {
 }
 
 type schoolWithList struct {
-	SchoolID   int                     `json:"school_id"`
-	SchoolName string                  `json:"school_name"`
-	SupplyList []supplylist.SupplyList `json:"supply_lists"`
+	SchoolID   int           `json:"school_id"`
+	SchoolName string        `json:"school_name"`
+	SupplyList []listDetails `json:"supply_lists"`
+}
+
+type listDetails struct {
+	ListID   int    `json:"list_id"`
+	Grade    int    `json:"grade"`
+	SchoolID int    `json:"school_id"`
+	ListName string `json:"list_name"`
 }
 
 func GetSchool(db *database.DB) gin.HandlerFunc {
@@ -61,21 +67,22 @@ func GetSchool(db *database.DB) gin.HandlerFunc {
 				c.AbortWithStatusJSON(500, "The server was unable to retrieve school info")
 				return
 			}
-			rowcount ++
+			rowcount++
 		}
-		if rowcount == 0{
+		if rowcount == 0 {
 			c.AbortWithStatusJSON(404, "This school does not exist")
 			return
 		}
 
-		listRows, err := db.Db.Query(`SELECT grade, list_name, school_id from supply_list`)
+		listRows, err := db.Db.Query(`SELECT list_id, grade, list_name, school_id from supply_list`)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}
+
 		for listRows.Next() {
-			var list supplylist.SupplyList
-			err = listRows.Scan(&list.Grade, &list.ListName, &list.SchoolID)
+			var list listDetails
+			err = listRows.Scan(&list.ListID, &list.Grade, &list.ListName, &list.SchoolID)
 			school.SupplyList = append(school.SupplyList, list)
 		}
 
