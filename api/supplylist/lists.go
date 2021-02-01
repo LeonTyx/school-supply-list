@@ -84,7 +84,7 @@ func GetSupplyList(db *database.DB) gin.HandlerFunc {
 
 func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string][]supplies.SupplyItem, error) {
 	var basicSupplies []supplies.SupplyItem
-	rows, err := db.Db.Query(`SELECT id, supply_name, supply_desc, category FROM supply_item sup 
+	rows, err := db.Db.Query(`SELECT id, list_id, supply_name, supply_desc, category FROM supply_item sup 
 										WHERE list_id = $1`, id)
 	categorizedSupplies := make(map[string][]supplies.SupplyItem)
 	if err != nil {
@@ -93,7 +93,7 @@ func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string
 	for rows.Next() {
 		var supply supplies.SupplyItem
 
-		err = rows.Scan(&supply.ID, &supply.Supply, &supply.Desc, &supply.Category)
+		err = rows.Scan(&supply.ID, &supply.ListID, &supply.Supply, &supply.Desc, &supply.Category)
 
 		// Check if item is categorized
 		if supply.Category.Valid {

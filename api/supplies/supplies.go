@@ -2,7 +2,7 @@ package supplies
 
 import (
 	"database/sql"
-	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"school-supply-list/database"
@@ -25,8 +25,9 @@ func CreateSupply(db *database.DB) gin.HandlerFunc {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
 		}
-		row := db.Db.QueryRow(`INSERT INTO supply_item (list_id, supply_name, supply_desc) 
-		  VALUES ($1, $2, $3) RETURNING id`, supply.ListID, supply.Supply, supply.Desc)
+
+		row := db.Db.QueryRow(`INSERT INTO supply_item (list_id, supply_name, supply_desc, category) 
+		  VALUES ($1, $2, $3, $4) RETURNING id`, supply.ListID, supply.Supply, supply.Desc, supply.Category)
 		err = row.Scan(&supply.ID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
@@ -88,19 +89,19 @@ func UpdateSupply(db *database.DB) gin.HandlerFunc {
 			return
 		}
 		var supply SupplyItem
-		err = json.NewDecoder(c.Request.Body).Decode(&supply)
-
-		supply.ID = id
+		err = c.BindJSON(&supply)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid request.")
 			return
 		}
-		row := db.Db.QueryRow(`UPDATE supply_item SET supply_name=$1, supply_desc=$2
-	   		where id=$3 returning id, supply_name, supply_desc`, supply.Supply, supply.Desc)
-		//Scan the latest changes into the supply struct
-		err = row.Scan(&supply.ID, &supply.Supply, supply.Desc)
+		row := db.Db.QueryRow(`UPDATE supply_item SET supply_name=$1, supply_desc=$2, category=$3
+	   		where id=$4 returning id, list_id, supply_name, supply_desc, category`,
+	   		supply.Supply, supply.Desc, supply.Category, id)
+
+		err = row.Scan(&supply.ID, &supply.ListID, &supply.Supply, &supply.Desc, &supply.Category)
 		if err != nil {
+			fmt.Println(err)
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
 		}

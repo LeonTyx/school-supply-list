@@ -1,43 +1,52 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import './SupplyItem.scss'
 import DisplayError from "../Error/DisplayError";
+import {userSession} from "../../UserSession";
+import {canEdit, canDelete} from "../Permissions/Permissions";
 
 function SupplyItem(props) {
     const [supplyName, setSupplyName] = useState(props.supply.supply)
     const [supplyDesc, setSupplyDesc] = useState(props.supply.desc)
+    const [category, setCategory] = useState(props.supply.item_category.String)
+
     const [editing, setEditing] = useState(false)
-    const [deleting, setDeleting] = useState(false)
+    const [savingChanges, setSavingChanges] = useState(false)
     const [deleted, setDeleted] = useState(false)
 
+    const [user] = useContext(userSession)
     const [error, setError] = useState(null)
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
         }
-        return response;
+        return response.json();
     }
 
-    function editItem(){
-        setEditing(true)
+    function submitChanges(){
+        setSavingChanges(true)
+        let body = {
+            "supply": supplyName,
+            "desc": supplyDesc,
+            "item_category": {String:"", Valid:false},
+        }
+        if(category !== ""){
+            body["item_category"] = {String:category,Valid: true}
+        }
 
         fetch("/api/v1/supply/" + props.supply.id, {
             method: "POST",
-            body: JSON.stringify({
-                "school_id": supplyName,
-                "list_name": supplyDesc,
-            })
+            body: JSON.stringify(body)
         })
             .then((resp) => handleErrors(resp, "Unable to create list. Try again later."))
-            .then(() => {
-                setSupplyName("")
-                setSupplyDesc("")
-                setEditing(false)
+            .then((resp) => {
+                props.saveChanges(resp)
+                setSavingChanges(false)
             })
             .catch(error => setError(error.toString()));
     }
 
     function deleteItem(){
-        setDeleting(true)
+        setSavingChanges(true)
 
         fetch("/api/v1/supply/" + props.supply.id, {
             method: "DELETE",
@@ -45,7 +54,7 @@ function SupplyItem(props) {
             .then((resp) => handleErrors(resp, "Unable to create list. Try again later."))
             .then(() => {
                 setDeleted(true)
-                setDeleting(false)
+                setSavingChanges(false)
             })
             .catch(error => setError(error.toString()));
     }
@@ -53,23 +62,41 @@ function SupplyItem(props) {
     return (
         !deleted &&
         <div className="supply-item">
-            <div className="supply-name">{props.supply.supply}</div>
-            <div className="supply-desc">{props.supply.desc}</div>
-
-            {editing ? (
-                <button disabled={true}>Editing...</button>
+            {!editing ? (
+                <React.Fragment>
+                    <div className="supply-name">{supplyName}</div>
+                    <div className="supply-desc">{supplyDesc}</div>
+                    <div className="category">{category}</div>
+                </React.Fragment>
             ) : (
-                <button onClick={editItem}>
-                    Edit
-                </button>
+                <React.Fragment>
+                    <input value={supplyName} onChange={(e)=>setSupplyName(e.target.value)}/>
+                    <input value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
+                    <input value={category}
+                           onChange={(e)=>setCategory(e.target.value)}/>
+                </React.Fragment>
             )}
 
-            {deleting ? (
-                <button disabled={true}>Deleting...</button>
+            {canEdit("supply", user) && <button onClick={()=>setEditing(!editing)}>Edit</button>}
+
+            {savingChanges ? (
+                <React.Fragment>
+                    <button disabled={true}>Waiting for server...</button>
+                </React.Fragment>
             ) : (
-                <button onClick={deleteItem}>
-                    Remove
-                </button>
+                <React.Fragment>
+                    {canEdit("supply", user) && (
+                        <button onClick={submitChanges}>
+                            Save
+                        </button>
+                    )}
+                    {canDelete("supply", user) && (
+                        <button onClick={deleteItem}>
+                            Remove
+                        </button>
+                    )}
+                </React.Fragment>
+
             )}
 
             {error != null && <DisplayError msg={error}/>}

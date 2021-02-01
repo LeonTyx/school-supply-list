@@ -5,6 +5,7 @@ import {userSession} from "../../UserSession";
 function AddSupply(props) {
     const [supplyName, setSupplyName] = useState("")
     const [supplyDesc, setSupplyDesc] = useState("")
+    const [category, setCategory] = useState("")
     const [submitting, setSubmitting] = useState(false)
     const [user] = useContext(userSession)
 
@@ -17,18 +18,25 @@ function AddSupply(props) {
     }
     function addSupply() {
         setSubmitting(true)
+        let body = {
+            "list_id": props.listID,
+            "supply": supplyName,
+            "desc": supplyDesc,
+            "item_category": {String:"", Valid:false},
+        }
+        if(category !== ""){
+            body["item_category"] = {String:category, Valid:true}
+        }
+
         fetch("/api/v1/supply", {
             method: "PUT",
-            body: JSON.stringify({
-                "list_id": props.listID,
-                "supply": supplyName,
-                "desc": supplyDesc,
-            })
+            body: JSON.stringify(body),
         })
             .then((resp) => handleErrors(resp, "Unable to add supply. Try again later."))
             .then(() => {
                 setSupplyName("")
                 setSupplyDesc("")
+                setCategory("")
                 setSubmitting(false)
             })
             .catch(error => setError(error.toString()));
@@ -42,6 +50,10 @@ function AddSupply(props) {
             </label>
             <label>
                 <textarea value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
+            </label>
+            <label>
+                <input value={category}
+                       onChange={(e)=>setCategory(e.target.value)}/>
             </label>
 
             <button onClick={addSupply}>Add</button>

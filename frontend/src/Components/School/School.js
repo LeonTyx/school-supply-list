@@ -14,7 +14,7 @@ function School(props) {
         }
         return response.json();
     }
-    console.log(props.match.params.id)
+
     useEffect(() => {
         //Fetch school from api
         fetch("/api/v1/school/" + props.match.params.id)
@@ -39,7 +39,7 @@ function School(props) {
                 <div className="supply-lists">
                     {school.supply_lists != null ? (
                         school.supply_lists.map((list) =>
-                                <Link to={"/supply-list/"+list.list_id}>{list.list_name}</Link>
+                                <Link to={"/supply-list/"+list.list_id} key={list.list_id}>{list.list_name}</Link>
                             )
                     ) : (
                         <div>No lists yet!</div>
