@@ -67,17 +67,28 @@ function SupplyItem(props) {
                     <div className="supply-name">{supplyName}</div>
                     <div className="supply-desc">{supplyDesc}</div>
                     <div className="category">{category}</div>
+                    {canEdit("supply", user) &&
+                        <button onClick={()=>setEditing(!editing)}>Edit</button>
+                    }
                 </React.Fragment>
             ) : (
-                <React.Fragment>
-                    <input value={supplyName} onChange={(e)=>setSupplyName(e.target.value)}/>
-                    <input value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
-                    <input value={category}
-                           onChange={(e)=>setCategory(e.target.value)}/>
-                </React.Fragment>
+                <div className="editing-supply">
+                    <label>
+                        <input value={supplyName} onChange={(e)=>setSupplyName(e.target.value)}/>
+                    </label>
+                    <label>
+                        <input value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
+                    </label>
+                    <label>
+                        <input value={category}
+                               onChange={(e)=>setCategory(e.target.value)}/>
+                    </label>
+                    {canEdit("supply", user) &&
+                        <button onClick={()=>setEditing(!editing)}>Stop Editing</button>
+                    }
+                </div>
             )}
 
-            {canEdit("supply", user) && <button onClick={()=>setEditing(!editing)}>Edit</button>}
 
             {savingChanges ? (
                 <React.Fragment>

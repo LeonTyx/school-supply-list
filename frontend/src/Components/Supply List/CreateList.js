@@ -42,7 +42,7 @@ function CreateList(props) {
         canCreate("supply-list", user) &&
         <form className="create-list"
               onSubmit={(e) => e.preventDefault()}>
-            Create List
+            <h2>Create List</h2>
             <label>
                 List Title
                 <input value={title}

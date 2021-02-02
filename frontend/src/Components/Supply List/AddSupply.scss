@@ -1,28 +1,24 @@
-.create-list{
-  margin: 1rem 0;
-  background: #fff;
-  width: 25rem;
-  padding: .5rem 1rem;
-  border-radius: .5rem;
-
-  h2{
-    color: #444;
-    margin: .25rem 0 .5rem;
-  }
-
+.add-supply{
   label{
     display: block;
-    margin: 1rem 0;
+    margin: .5rem 0;
+
     input{
-      display: block;
-      border: solid #ddd .15rem;
-      width: 100%;
-      margin: 0;
-      box-sizing: border-box;
+      border:solid #ddd .15rem;
       border-radius: .15rem;
+      width: 100%;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    textarea{
+      border:solid #ddd .15rem;
+      border-radius: .15rem;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
     }
   }
-
   button{
     width: 100%;
     background: #ddd;

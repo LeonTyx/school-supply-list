@@ -1,4 +1,5 @@
 import React,{useState, useContext} from 'react';
+import "./AddSupply.scss";
 import {canCreate} from "../Permissions/Permissions";
 import {userSession} from "../../UserSession";
 
@@ -44,18 +45,23 @@ function AddSupply(props) {
 
     return (
         canCreate("supply", user) &&
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form className="add-supply"
+              onSubmit={(e) => e.preventDefault()}>
             <label>
-                <input value={supplyName} onChange={(e)=>setSupplyName(e.target.value)}/>
+                Supply
+                <input value={supplyName}
+                       onChange={(e)=>setSupplyName(e.target.value)}/>
             </label>
             <label>
-                <textarea value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
+                Description
+                <textarea value={supplyDesc}
+                          onChange={(e)=>setSupplyDesc(e.target.value)}/>
             </label>
             <label>
+                Category
                 <input value={category}
                        onChange={(e)=>setCategory(e.target.value)}/>
             </label>
-
             <button onClick={addSupply}>Add</button>
         </form>
     );
