@@ -1,11 +1,14 @@
 import './Home.scss'
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext} from "react";
 import SchoolCard from "./SchoolCard";
 import CreateSchool from "./CreateSchool";
+import {userSession} from "../../UserSession";
+import {canCreate} from "../Permissions/Permissions";
 
 function Home() {
     const [schools, setSchools] = useState(null);
     const [error, setError] = useState(null)
+    const [user] = useContext(userSession)
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -31,12 +34,13 @@ function Home() {
         error === null &&
         <div className="home">
             <section className="schools">
+                <h2>Schools</h2>
                 {schools !== null && schools.map((school) =>
                     <SchoolCard key={school.school_id} school={school}/>
                 )}
             </section>
 
-            <CreateSchool/>
+            {canCreate("school", user) && <CreateSchool/>}
         </div>
     );
 

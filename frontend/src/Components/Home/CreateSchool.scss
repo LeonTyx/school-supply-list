@@ -1,0 +1,40 @@
+.create-school{
+  margin: 1em auto;
+  background: #fff;
+  width: 25rem;
+  display: block;
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+
+  h2 {
+    color: #444;
+    margin: .5rem 0;
+    text-align: center;
+  }
+
+  label{
+    display: block;
+    input{
+      display: block;
+      width: 100%;
+      border: solid #81a1c1 .1rem;
+      border-radius: .15rem;
+      box-sizing: border-box;
+    }
+  }
+
+  button{
+    cursor: pointer;
+    width: 100%;
+    margin: .5rem 0 0;
+    padding: .2rem;
+    background: #ddd;
+    border: none;
+    border-radius: .5rem;
+
+    &:hover{
+      background: #eee;
+      transition: .1s;
+    }
+  }
+}

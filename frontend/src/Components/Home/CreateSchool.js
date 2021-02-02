@@ -35,7 +35,8 @@ function CreateSchool() {
     return (
         error === null &&
         canCreate("school", user) && (
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form className="create-school"
+                  onSubmit={(e) => e.preventDefault()}>
                 <h2>Create School</h2>
                 <label>
                     School Name
