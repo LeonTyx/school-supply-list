@@ -1,13 +1,32 @@
 .create-role {
+  margin: .5rem 0;
+  border-radius: .25rem;
+  padding: .25rem .5rem;
+  width: 45rem;
+  background: #fff;
   display: block;
+
+  h2{
+    color:#444;
+    margin: .5rem 0;
+  }
 
   textarea {
     display: block;
+    border: solid #ddd .15rem;
+    border-radius: .15rem;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
   }
 
   input {
     display: block;
+    &[type=text]{
+      width: 100%;
+    }
   }
+
 
   .resources {
     .resources {

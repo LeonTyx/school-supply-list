@@ -6,10 +6,11 @@ function Account() {
     const [user] = useContext(userSession)
 
     return (
-        <div>
+        <div className="account">
+            <img src={user.picture} alt={"profile"}/>
+
             <div>{user.name}</div>
             <div>{user.email}</div>
-            <div>{user.picture}</div>
         </div>
     );
 

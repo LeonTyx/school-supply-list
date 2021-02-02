@@ -47,7 +47,7 @@ function Users() {
 
     return (
         error === null && users !== null && roles !== null ? (
-            <div>
+            <div className="users">
                 {users.map((user) =>
                     <User user={user} roles={roles} key={user.user_id}/>
                 )}

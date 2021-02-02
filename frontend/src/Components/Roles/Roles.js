@@ -43,7 +43,7 @@ function Roles() {
 
     return (
         error === null && roles != null &&
-        <div>
+        <div className="all-roles">
             <CreateRole resources={resources}/>
             {Object.keys(roles).map((roleID) =>
                 <Role role={roles[roleID]} key={roleID}/>

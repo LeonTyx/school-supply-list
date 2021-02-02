@@ -74,13 +74,21 @@ function SupplyItem(props) {
             ) : (
                 <div className="editing-supply">
                     <label>
-                        <input value={supplyName} onChange={(e)=>setSupplyName(e.target.value)}/>
+                        Supply
+                        <input value={supplyName}
+                               placeholder={"Supply"}
+                               onChange={(e)=>setSupplyName(e.target.value)}/>
                     </label>
                     <label>
-                        <input value={supplyDesc} onChange={(e)=>setSupplyDesc(e.target.value)}/>
+                        Description
+                        <input value={supplyDesc}
+                               placeholder={"Description"}
+                               onChange={(e)=>setSupplyDesc(e.target.value)}/>
                     </label>
                     <label>
+                        Category
                         <input value={category}
+                               placeholder={"Category"}
                                onChange={(e)=>setCategory(e.target.value)}/>
                     </label>
                     {canEdit("supply", user) &&

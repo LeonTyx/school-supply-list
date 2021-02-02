@@ -18,3 +18,33 @@ code {
 * > {
   box-sizing: border-box;
 }
+
+button{
+  background: #ddd;
+  border:none;
+  border-radius: .15rem;
+  padding: .25rem .5rem;
+  cursor: pointer;
+  margin: .25rem;
+  box-sizing: border-box;
+  transition: .2s;
+
+  &:hover{
+    background: #eee;
+  }
+
+  &.delete{
+    background: #cd2026;
+    color: #fff;
+
+    &:hover{
+      background: #e31c3d;
+    }
+  }
+}
+
+input{
+  border:solid #ddd .15rem;
+  border-radius: .15rem;
+  box-sizing: border-box;
+}

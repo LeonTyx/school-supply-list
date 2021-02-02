@@ -47,7 +47,7 @@ function User(props) {
 
     return (
         !isDeleted &&
-        <div>
+        <div className="user">
             {user.name}
             <div className="roles">
                 {Object.keys(roles).map((roleID) =>
@@ -64,7 +64,7 @@ function User(props) {
             ) : (
                 <button onClick={updateRoles}>Save Changes</button>
             )}
-            <button onClick={deleteUser}>Delete</button>
+            <button onClick={deleteUser} className="delete">Delete</button>
             {error != null && <DisplayError error_msg_str={error}/>}
         </div>
     );

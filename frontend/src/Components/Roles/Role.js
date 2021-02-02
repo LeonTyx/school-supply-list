@@ -38,7 +38,7 @@ function Role(props) {
 
     return (
         !isDeleted &&
-        <div>
+        <div className="role">
             <h3>{role.name}</h3>
             {role.resources != null &&
             Object.keys(role.resources).map((resourceKey) =>

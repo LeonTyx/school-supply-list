@@ -45,11 +45,13 @@ function CreateRole(props) {
 
     return (
         error === null &&
-        <form className="create-role" onSubmit={(e) => e.preventDefault()}>
+        <form className="create-role"
+              onSubmit={(e) => e.preventDefault()}>
             <h2>Create Role</h2>
             <label>
                 Role name
-                <input value={roleName}
+                <input type="text"
+                       value={roleName}
                        onChange={(e) => {
                            setRoleName(e.target.value)
                        }}/>
