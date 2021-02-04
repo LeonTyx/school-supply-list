@@ -34,7 +34,7 @@ func init() {
 	database.PerformMigrations("file://../../database/migrations")
 
 	db = database.InitDBConnection()
-	SessionStore := database.InitOauthStore()
+	SessionStore = database.InitOauthStore()
 
 	dbConnection := &database.DB{Db: db, SessionStore: SessionStore}
 
@@ -60,28 +60,29 @@ func init() {
 func createTestUser() {
 	row := db.QueryRow(`INSERT INTO account (user_id, google_id, email, name, google_picture, expires_in, access_token)  
 								VALUES ('00000000-0000-11eb-a029-00ff282e905c', '00000000000000', 'testuser@example.com', 
-								'Johnny Test', 'img.png', '2080-12-29 03:56:43.854138' , '0000000') RETURNING user_id`)
-	var id string
-	err := row.Scan(&id)
-	if err != nil {
-		log.Fatal("Unable to create test user to be deleted. Error: ", err)
+								'Johnny Test', 'img.png', '2080-12-29 03:56:43.854138' , '0000000') on conflict do nothing returning user_id`)
+	if row.Err() != nil {
+		log.Fatal("Unable to create test user to be deleted. Error: ", row.Err())
 	}
 }
 
 func cleanupDatabase() {
-	row := db.QueryRow(`DELETE from account where user_id=$1 returning user_id`, "00000000-0000-11eb-a029-00ff282e905c")
-	var id string
-	err := row.Scan(&id)
-	if err != nil {
-		log.Fatal("Unable to remove test user. Error: ", err)
+	row := db.QueryRow(`DELETE from account where user_id=$1`, "00000000-0000-11eb-a029-00ff282e905c")
+	if row.Err() != nil {
+		log.Fatal("Unable to remove test user. Error: ", row.Err())
 	}
 
-	db.QueryRow(`DELETE from role where role_id=-1`)
+	row = db.QueryRow(`DELETE from role where role_id=-1`)
+	if row.Err() != nil {
+		log.Fatal("Unable to remove test role. Error: ", row.Err())
+	}
 }
 
 func createDefaultUser(r *http.Request, w *httptest.ResponseRecorder) {
 	createTestUser()
+
 	session, err := SessionStore.Get(r, "session")
+	fmt.Println("...............................................................................")
 	if err != nil {
 		log.Fatal("Could not create session")
 	}
@@ -100,7 +101,7 @@ func createDefaultUser(r *http.Request, w *httptest.ResponseRecorder) {
 
 func addValidRole() int {
 	row := db.QueryRow(`INSERT INTO role (role_id, role_name, role_desc) 
-								VALUES (-1, 'test', 'Temporary test role. Delete if present outside of testing.') returning role_id`)
+								VALUES (-1, 'test', 'Temporary test role. Delete if present outside of testing.') ON CONFLICT do nothing returning role_id`)
 	var id int
 	err := row.Scan(&id)
 	if err != nil {
@@ -130,13 +131,11 @@ func TestCreateSchool(t *testing.T) {
 	}
 
 	req, err := http.NewRequest("PUT", "/api/v1/school", bytes.NewBuffer(schoolJson))
-
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 
 	w := httptest.NewRecorder()
-
 	createDefaultUser(req, w)
 	addValidRole()
 
