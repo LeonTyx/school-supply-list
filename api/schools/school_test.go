@@ -186,7 +186,13 @@ func TestGetSchools(t *testing.T) {
 }
 
 func TestGetSchool(t *testing.T) {
-	req, err := http.NewRequest("GET", "/api/v1/school/1", nil)
+	row := db.QueryRow("INSERT INTO school (school_name, school_id) VALUES ('Test', default) RETURNING school_id")
+	var id string
+	err := row.Scan(&id)
+	if err != nil{
+		t.Fail()
+	}
+	req, err := http.NewRequest("GET", "/api/v1/school/"+id, nil)
 
 	if err != nil {
 		t.Fatalf(err.Error())
