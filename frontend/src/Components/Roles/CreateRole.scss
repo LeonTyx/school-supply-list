@@ -6,8 +6,8 @@
   background: #fff;
   display: block;
 
-  h2{
-    color:#444;
+  h2 {
+    color: #444;
     margin: .5rem 0;
   }
 
@@ -22,7 +22,8 @@
 
   input {
     display: block;
-    &[type=text]{
+
+    &[type=text] {
       width: 100%;
     }
   }

@@ -1,7 +1,7 @@
-function canCreate(resource, user){
+function canCreate(resource, user) {
     if (user !== undefined && user !== null) {
         let resc = user.consolidated_resources
-        if(resc === undefined){
+        if (resc === undefined) {
             return false;
         }
         if (resc[resource] !== undefined && resc[resource].policy.can_view) {
@@ -11,7 +11,7 @@ function canCreate(resource, user){
     return false
 }
 
-function canView(resource, user){
+function canView(resource, user) {
     if (user !== undefined && user !== null) {
         let resc = user.consolidated_resources
         if (resc[resource] !== undefined && resc[resource].policy.can_view) {
@@ -21,7 +21,7 @@ function canView(resource, user){
     return false
 }
 
-function canEdit(resource, user){
+function canEdit(resource, user) {
     if (user !== undefined && user !== null) {
         let resc = user.consolidated_resources
         if (resc[resource] !== undefined && resc[resource].policy.can_view) {
@@ -31,7 +31,7 @@ function canEdit(resource, user){
     return false
 }
 
-function canDelete(resource, user){
+function canDelete(resource, user) {
     if (user !== undefined && user !== null) {
         let resc = user.consolidated_resources
         if (resc[resource] !== undefined && resc[resource].policy.can_view) {

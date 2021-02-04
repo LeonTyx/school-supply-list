@@ -9,6 +9,7 @@ function CreateSchool() {
     const [user] = useContext(userSession)
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -40,7 +41,7 @@ function CreateSchool() {
                 <h2>Create School</h2>
                 <label>
                     School Name
-                    <input value={schoolName} onChange={(e)=>setSchoolName(e.target.value)}/>
+                    <input value={schoolName} onChange={(e) => setSchoolName(e.target.value)}/>
                 </label>
                 {updating ? (
                     <button disabled={true}>Updating</button>

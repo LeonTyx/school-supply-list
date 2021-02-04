@@ -6,7 +6,7 @@ function SchoolCard(props) {
     let school = props.school
     return (
         <div className="school-card">
-            <Link to={"/school/"+school.school_id}>{school.school_name}</Link>
+            <Link to={"/school/" + school.school_id}>{school.school_name}</Link>
         </div>
     );
 

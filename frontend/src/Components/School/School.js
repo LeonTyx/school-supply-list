@@ -8,6 +8,7 @@ function School(props) {
     const [school, setSchool] = useState(null)
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -39,8 +40,8 @@ function School(props) {
                 <div className="supply-lists">
                     {school.supply_lists != null ? (
                         school.supply_lists.map((list) =>
-                                <Link to={"/supply-list/"+list.list_id} key={list.list_id}>{list.list_name}</Link>
-                            )
+                            <Link to={"/supply-list/" + list.list_id} key={list.list_id}>{list.list_name}</Link>
+                        )
                     ) : (
                         <div>No lists yet!</div>
                     )}
@@ -48,7 +49,7 @@ function School(props) {
                     <CreateList schoolID={parseInt(props.match.params.id)}/>
                 </div>
             </div>
-        ):(
+        ) : (
             <DisplayError msg={error}/>
         )
     );
