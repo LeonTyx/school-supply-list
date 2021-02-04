@@ -1,16 +1,16 @@
-.all-roles{
+.all-roles {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
 
-  .role{
+  .role {
     margin: .25rem 0;
     padding: .25rem .5rem;
     border-radius: .25rem;
     width: 45rem;
     background: #fff;
 
-    h3{
+    h3 {
       color: #444;
     }
   }

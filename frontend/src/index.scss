@@ -19,9 +19,9 @@ code {
   box-sizing: border-box;
 }
 
-button{
+button {
   background: #ddd;
-  border:none;
+  border: none;
   border-radius: .15rem;
   padding: .25rem .5rem;
   cursor: pointer;
@@ -29,22 +29,22 @@ button{
   box-sizing: border-box;
   transition: .2s;
 
-  &:hover{
+  &:hover {
     background: #eee;
   }
 
-  &.delete{
+  &.delete {
     background: #cd2026;
     color: #fff;
 
-    &:hover{
+    &:hover {
       background: #e31c3d;
     }
   }
 }
 
-input{
-  border:solid #ddd .15rem;
+input {
+  border: solid #ddd .15rem;
   border-radius: .15rem;
   box-sizing: border-box;
 }

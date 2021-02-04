@@ -1,4 +1,4 @@
-import React,{useState, useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import "./AddSupply.scss";
 import {canCreate} from "../Permissions/Permissions";
 import {userSession} from "../../UserSession";
@@ -11,22 +11,24 @@ function AddSupply(props) {
     const [user] = useContext(userSession)
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
         }
         return response;
     }
+
     function addSupply() {
         setSubmitting(true)
         let body = {
             "list_id": props.listID,
             "supply": supplyName,
             "desc": supplyDesc,
-            "item_category": {String:"", Valid:false},
+            "item_category": {String: "", Valid: false},
         }
-        if(category !== ""){
-            body["item_category"] = {String:category, Valid:true}
+        if (category !== "") {
+            body["item_category"] = {String: category, Valid: true}
         }
 
         fetch("/api/v1/supply", {
@@ -50,17 +52,17 @@ function AddSupply(props) {
             <label>
                 Supply
                 <input value={supplyName}
-                       onChange={(e)=>setSupplyName(e.target.value)}/>
+                       onChange={(e) => setSupplyName(e.target.value)}/>
             </label>
             <label>
                 Description
                 <textarea value={supplyDesc}
-                          onChange={(e)=>setSupplyDesc(e.target.value)}/>
+                          onChange={(e) => setSupplyDesc(e.target.value)}/>
             </label>
             <label>
                 Category
                 <input value={category}
-                       onChange={(e)=>setCategory(e.target.value)}/>
+                       onChange={(e) => setCategory(e.target.value)}/>
             </label>
             <button onClick={addSupply}>Add</button>
         </form>

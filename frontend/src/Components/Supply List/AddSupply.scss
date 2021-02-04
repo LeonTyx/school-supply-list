@@ -1,22 +1,23 @@
-.add-supply{
-  label{
+.add-supply {
+  label {
     display: block;
     margin: .5rem 0;
 
-    input{
+    input {
       display: block;
       width: 100%;
     }
 
-    textarea{
-      border:solid #ddd .15rem;
+    textarea {
+      border: solid #ddd .15rem;
       border-radius: .15rem;
       display: block;
       width: 100%;
       box-sizing: border-box;
     }
   }
-  button{
+
+  button {
     width: 100%;
   }
 }

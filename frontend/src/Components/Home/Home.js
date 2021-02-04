@@ -1,5 +1,5 @@
 import './Home.scss'
-import {useEffect, useState, useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import SchoolCard from "./SchoolCard";
 import CreateSchool from "./CreateSchool";
 import {userSession} from "../../UserSession";
@@ -9,6 +9,7 @@ function Home() {
     const [schools, setSchools] = useState(null);
     const [error, setError] = useState(null)
     const [user] = useContext(userSession)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)

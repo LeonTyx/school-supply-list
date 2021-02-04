@@ -1,4 +1,4 @@
-.create-school{
+.create-school {
   margin: 1em auto;
   background: #fff;
   width: 25rem;
@@ -12,9 +12,10 @@
     text-align: center;
   }
 
-  label{
+  label {
     display: block;
-    input{
+
+    input {
       display: block;
       width: 100%;
       border: solid #81a1c1 .1rem;
@@ -23,7 +24,7 @@
     }
   }
 
-  button{
+  button {
     cursor: pointer;
     width: 100%;
     margin: .5rem 0 0;
@@ -32,7 +33,7 @@
     border: none;
     border-radius: .5rem;
 
-    &:hover{
+    &:hover {
       background: #eee;
       transition: .1s;
     }

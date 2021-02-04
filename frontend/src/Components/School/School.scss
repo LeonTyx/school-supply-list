@@ -1,16 +1,17 @@
-.school{
-  .school-header{
-    h2{
-      color:#444;
+.school {
+  .school-header {
+    h2 {
+      color: #444;
       text-align: center;
     }
   }
-  .supply-lists{
+
+  .supply-lists {
     display: flex;
-    flex-flow:column nowrap;
+    flex-flow: column nowrap;
     align-items: center;
 
-    a{
+    a {
       padding: .5rem 1rem;
       background: #fff;
       width: 25rem;
@@ -18,7 +19,7 @@
       text-decoration: none;
       color: #444;
 
-      &:visited{
+      &:visited {
         color: #444;
       }
     }

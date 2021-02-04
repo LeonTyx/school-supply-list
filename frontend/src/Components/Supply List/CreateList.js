@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import './CreateList.scss'
 import DisplayError from "../Error/DisplayError";
 import {userSession} from "../../UserSession";
@@ -11,6 +11,7 @@ function CreateList(props) {
     const [user] = useContext(userSession)
 
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -47,7 +48,7 @@ function CreateList(props) {
                 List Title
                 <input value={title}
                        placeholder="list title"
-                       onChange={(e)=>setTitle(e.target.value)}
+                       onChange={(e) => setTitle(e.target.value)}
                 />
             </label>
             <label>
@@ -57,7 +58,7 @@ function CreateList(props) {
                        type="number"
                        min={-1}
                        max={12}
-                       onChange={(e)=>setGrade(e.target.value)}/>
+                       onChange={(e) => setGrade(e.target.value)}/>
             </label>
             {submitting ? (
                 <button disabled={true}>Submitting...</button>

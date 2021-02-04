@@ -1,8 +1,8 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import './SupplyItem.scss'
 import DisplayError from "../Error/DisplayError";
 import {userSession} from "../../UserSession";
-import {canEdit, canDelete} from "../Permissions/Permissions";
+import {canDelete, canEdit} from "../Permissions/Permissions";
 
 function SupplyItem(props) {
     const [supplyName, setSupplyName] = useState(props.supply.supply)
@@ -15,6 +15,7 @@ function SupplyItem(props) {
 
     const [user] = useContext(userSession)
     const [error, setError] = useState(null)
+
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
@@ -22,15 +23,15 @@ function SupplyItem(props) {
         return response.json();
     }
 
-    function submitChanges(){
+    function submitChanges() {
         setSavingChanges(true)
         let body = {
             "supply": supplyName,
             "desc": supplyDesc,
-            "item_category": {String:"", Valid:false},
+            "item_category": {String: "", Valid: false},
         }
-        if(category !== ""){
-            body["item_category"] = {String:category,Valid: true}
+        if (category !== "") {
+            body["item_category"] = {String: category, Valid: true}
         }
 
         fetch("/api/v1/supply/" + props.supply.id, {
@@ -45,7 +46,7 @@ function SupplyItem(props) {
             .catch(error => setError(error.toString()));
     }
 
-    function deleteItem(){
+    function deleteItem() {
         setSavingChanges(true)
 
         fetch("/api/v1/supply/" + props.supply.id, {
@@ -68,7 +69,7 @@ function SupplyItem(props) {
                     <div className="supply-desc">{supplyDesc}</div>
                     <div className="category">{category}</div>
                     {canEdit("supply", user) &&
-                        <button onClick={()=>setEditing(!editing)}>Edit</button>
+                    <button onClick={() => setEditing(!editing)}>Edit</button>
                     }
                 </React.Fragment>
             ) : (
@@ -77,22 +78,22 @@ function SupplyItem(props) {
                         Supply
                         <input value={supplyName}
                                placeholder={"Supply"}
-                               onChange={(e)=>setSupplyName(e.target.value)}/>
+                               onChange={(e) => setSupplyName(e.target.value)}/>
                     </label>
                     <label>
                         Description
                         <input value={supplyDesc}
                                placeholder={"Description"}
-                               onChange={(e)=>setSupplyDesc(e.target.value)}/>
+                               onChange={(e) => setSupplyDesc(e.target.value)}/>
                     </label>
                     <label>
                         Category
                         <input value={category}
                                placeholder={"Category"}
-                               onChange={(e)=>setCategory(e.target.value)}/>
+                               onChange={(e) => setCategory(e.target.value)}/>
                     </label>
                     {canEdit("supply", user) &&
-                        <button onClick={()=>setEditing(!editing)}>Stop Editing</button>
+                    <button onClick={() => setEditing(!editing)}>Stop Editing</button>
                     }
                 </div>
             )}
