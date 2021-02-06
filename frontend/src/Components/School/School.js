@@ -1,12 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import './School.scss'
 import DisplayError from "../Error/DisplayError";
 import CreateList from "./CreateList";
 import {Link} from "react-router-dom";
+import {canDelete} from "../Permissions/Permissions";
+import {userSession} from "../../UserSession";
 
 function School(props) {
     const [school, setSchool] = useState(null)
-
+    const [user] = useContext(userSession)
+    
     const [error, setError] = useState(null)
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
@@ -71,10 +74,12 @@ function School(props) {
                                 <Link to={"/supply-list/" + list.list_id}>
                                     {list.list_name}
                                 </Link>
-                                <button className="delete"
-                                        onClick={()=>removeList(list.list_id)}>
-                                    Remove
-                                </button>
+                                {canDelete("school", user) &&
+                                    <button className="delete"
+                                            onClick={() => removeList(list.list_id)}>
+                                        Remove
+                                    </button>
+                                }
                             </div>
                         )
                     ) : (
