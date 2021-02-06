@@ -5,12 +5,15 @@
 
   .role {
     margin: .25rem 0;
-    padding: .25rem .5rem;
+    padding: .5rem 1rem;
     border-radius: .25rem;
     width: 45rem;
     background: #fff;
+    max-width: calc(100% - 3rem);
+
 
     h3 {
+      margin: .5rem 0;
       color: #444;
     }
   }

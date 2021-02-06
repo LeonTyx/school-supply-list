@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './School.scss'
 import DisplayError from "../Error/DisplayError";
-import CreateList from "../Supply List/CreateList";
+import CreateList from "./CreateList";
 import {Link} from "react-router-dom";
 
 function School(props) {
