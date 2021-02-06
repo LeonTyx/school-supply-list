@@ -1,2 +1,2 @@
 web: school-supply-list
-build: npm run build
+release: npm run build
