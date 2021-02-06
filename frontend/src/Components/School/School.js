@@ -9,7 +9,7 @@ import {userSession} from "../../UserSession";
 function School(props) {
     const [school, setSchool] = useState(null)
     const [user] = useContext(userSession)
-    
+
     const [error, setError] = useState(null)
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
