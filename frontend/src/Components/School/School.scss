@@ -11,16 +11,27 @@
     flex-flow: column nowrap;
     align-items: center;
 
-    a {
-      padding: .5rem 1rem;
-      background: #fff;
+    .supply-list-card{
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
       width: 25rem;
-      border-radius: .25rem;
-      text-decoration: none;
-      color: #444;
+      padding: .5rem 1rem;
+      border-radius: .15rem;
+      background: #fff;
+      margin:.25rem 0;
 
-      &:visited {
+      a {
+        background: #fff;
+        width: 25rem;
+        border-radius: .25rem;
+        text-decoration: none;
         color: #444;
+
+        &:visited {
+          color: #444;
+        }
       }
     }
   }

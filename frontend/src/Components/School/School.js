@@ -57,6 +57,7 @@ function School(props) {
         schoolCopy["supply_lists"] = supplyListsCopy
         setSchool(schoolCopy)
     }
+
     return (
         error == null ? (
             school != null && <div className="school">
@@ -66,7 +67,7 @@ function School(props) {
                 <div className="supply-lists">
                     {school.supply_lists != null ? (
                         school.supply_lists.map((list) =>
-                            <div key={list.list_id}>
+                            <div className="supply-list-card" key={list.list_id}>
                                 <Link to={"/supply-list/" + list.list_id}>
                                     {list.list_name}
                                 </Link>
