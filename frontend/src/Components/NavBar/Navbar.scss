@@ -14,11 +14,11 @@ nav {
     font-size: 1.2em;
     font-weight: 400;
     padding: .5em 1em;
+    transition: background-color .2s;
 
     &:Hover {
       background: #2e3440;
       color: #fff;
-      transition: background-color .2s;
     }
   }
 

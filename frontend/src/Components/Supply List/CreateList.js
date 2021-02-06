@@ -16,7 +16,7 @@ function CreateList(props) {
         if (!response.ok) {
             setError(errorMessage)
         }
-        return response;
+        return response.json();
     }
 
     function submitForm() {
@@ -35,6 +35,7 @@ function CreateList(props) {
                 setTitle("")
                 setGrade("")
                 setSubmitting(false)
+                props.addList(response)
             })
             .catch(error => setError(error.toString()));
     }
