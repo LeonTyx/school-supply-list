@@ -2,8 +2,9 @@ import React, {useContext, useState} from 'react';
 import './CreateSchool.scss'
 import {userSession} from "../../UserSession";
 import {canCreate} from "../Permissions/Permissions";
+import DisplayError from "../Error/DisplayError";
 
-function CreateSchool() {
+function CreateSchool(props) {
     const [schoolName, setSchoolName] = useState("")
     const [updating, setUpdating] = useState(false)
     const [user] = useContext(userSession)
@@ -26,15 +27,15 @@ function CreateSchool() {
             })
         })
             .then((resp) => handleErrors(resp, "Unable to create school"))
-            .then(() => {
+            .then((resp) => {
                 setSchoolName("")
+                props.addSchool(resp)
                 setUpdating(false)
             })
-            .catch(error => setError(error));
+            .catch(error => setError(error.toString()));
     }
 
     return (
-        error === null &&
         canCreate("school", user) && (
             <form className="create-school"
                   onSubmit={(e) => e.preventDefault()}>
@@ -48,6 +49,7 @@ function CreateSchool() {
                 ) : (
                     <button onClick={submitForm}>Submit</button>
                 )}
+                {error === null && <DisplayError msg={error}/>}
             </form>
         )
     );

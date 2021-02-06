@@ -1,8 +1,12 @@
 .school-card {
-  display: block;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
   text-align: left;
   background: #fff;
   width: 25rem;
+  margin: .25rem 0;
   padding: .5rem 1rem;
   border-radius: .25rem;
 

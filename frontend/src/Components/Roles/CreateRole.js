@@ -8,7 +8,6 @@ function CreateRole(props) {
     const [roleResources, setRoleResources] = useState(Object.assign({}, props.resources))
 
     const [error, setError] = useState(null)
-
     function handleErrors(response, errorMessage) {
         if (!response.ok) {
             setError(errorMessage)
