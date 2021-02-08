@@ -34,7 +34,7 @@ export default function LoginButton() {
                 </button>
 
                 <div className={isOpen ? 'visible' : ''} role='menu' id='menu'>
-                    <Link {...itemProps[0]} to='./account' id='menu-item-1'>
+                    <Link {...itemProps[0]} to='/account' id='menu-item-1'>
                         View Account
                     </Link>
 

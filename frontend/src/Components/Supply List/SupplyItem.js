@@ -111,7 +111,7 @@ function SupplyItem(props) {
                         </button>
                     )}
                     {canDelete("supply", user) && (
-                        <button onClick={deleteItem}>
+                        <button onClick={deleteItem} className="delete">
                             Remove
                         </button>
                     )}

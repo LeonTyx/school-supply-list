@@ -74,6 +74,9 @@ function School(props) {
                                 <Link to={"/supply-list/" + list.list_id}>
                                     {list.list_name}
                                 </Link>
+                                <div className="grade">
+                                    {list.grade}
+                                </div>
                                 {canDelete("school", user) &&
                                     <button className="delete"
                                             onClick={() => removeList(list.list_id)}>
