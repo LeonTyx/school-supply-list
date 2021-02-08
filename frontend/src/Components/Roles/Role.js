@@ -64,7 +64,7 @@ function Role(props) {
             ) : (
                 <button onClick={updateRole}>Save Changes</button>
             )}
-            <button onClick={deleteRole}>Delete Role</button>
+            <button onClick={deleteRole} className="delete">Delete Role</button>
             {error !== null && <DisplayError error_msg_str={error}/>}
         </div>
     );
