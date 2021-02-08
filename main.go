@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"net/http"
 	"os"
 	"school-supply-list/api"
 	"school-supply-list/auth/authentication"
@@ -16,7 +17,7 @@ import (
 //Load the environment variables from the projectvars.env file
 func initEnv() {
 	if _, err := os.Stat("projectvars.env"); err == nil {
-		err := godotenv.Load("projectvars.env")
+		err = godotenv.Load("projectvars.env")
 		if err != nil {
 			fmt.Println("Error loading environment.env")
 		}
@@ -24,9 +25,23 @@ func initEnv() {
 	}
 }
 
+func forceSSL() gin.HandlerFunc{
+	return func(c *gin.Context) {
+		if c.Request.Header.Get("x-forwarded-proto") != "https" {
+			sslUrl := "https://" + c.Request.Host + c.Request.RequestURI
+			c.Redirect(http.StatusTemporaryRedirect, sslUrl)
+			return
+		}
+		c.Next()
+	}
+}
+
 func createServer(dbConnection *database.DB) *gin.Engine {
 	r := gin.Default()
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
+	if os.Getenv("ENV") != "DEV" {
+		r.Use(forceSSL())
+	}
 
 	authentication.Routes(r.Group("oauth/v1"), dbConnection)
 	api.Routes(r.Group("api/v1"), dbConnection)
