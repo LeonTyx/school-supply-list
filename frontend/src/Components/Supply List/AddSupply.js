@@ -16,7 +16,7 @@ function AddSupply(props) {
         if (!response.ok) {
             setError(errorMessage)
         }
-        return response;
+        return response.json();
     }
 
     function addSupply() {
@@ -36,10 +36,11 @@ function AddSupply(props) {
             body: JSON.stringify(body),
         })
             .then((resp) => handleErrors(resp, "Unable to add supply. Try again later."))
-            .then(() => {
+            .then((resp) => {
                 setSupplyName("")
                 setSupplyDesc("")
                 setCategory("")
+                props.addSupply(resp)
                 setSubmitting(false)
             })
             .catch(error => setError(error.toString()));

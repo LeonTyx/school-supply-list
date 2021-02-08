@@ -27,7 +27,21 @@ function SupplyList(props) {
 
         setList(updatedList)
     }
+    function createItem(supply){
+        let updatedList = JSON.parse(JSON.stringify(list))
 
+        if (!supply.item_category.Valid) {
+            updatedList["basic_supplies"].push(supply)
+        } else {
+            let targetCategory = supply.item_category.String
+            if(updatedList["categorized_supplies"][targetCategory] === undefined){
+                updatedList["categorized_supplies"][targetCategory] = [];
+            }
+            updatedList["categorized_supplies"][targetCategory].push(supply)
+        }
+
+        setList(updatedList)
+    }
     function deleteOldItem(id) {
         let updatedList = JSON.parse(JSON.stringify(list))
 
@@ -94,7 +108,7 @@ function SupplyList(props) {
                             ))}
                     </div>
                 )}
-                <AddSupply listID={list.list_id}/>
+                <AddSupply listID={list.list_id} addSupply={createItem}/>
             </div>
         ) : (
             <DisplayError msg={error}/>
