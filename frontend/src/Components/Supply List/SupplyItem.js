@@ -67,9 +67,8 @@ function SupplyItem(props) {
                 <React.Fragment>
                     <div className="supply-name">{supplyName}</div>
                     <div className="supply-desc">{supplyDesc}</div>
-                    <div className="category">{category}</div>
                     {canEdit("supply", user) &&
-                    <button onClick={() => setEditing(!editing)}>Edit</button>
+                        <button onClick={() => setEditing(!editing)}>Edit</button>
                     }
                 </React.Fragment>
             ) : (

@@ -9,3 +9,14 @@
     }
   }
 }
+
+.supply-item{
+  padding:.1rem .5rem;
+  &:nth-child(even){
+    border-radius: .25rem;
+    background: #f1f2f6;
+  }
+  .supply-desc{
+    color: #4c566a;
+  }
+}

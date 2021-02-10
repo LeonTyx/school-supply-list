@@ -89,6 +89,7 @@ function SupplyList(props) {
     return (
         error === null && list !== null ? (
             <div className="supply-list">
+                <h2>{list.list_name}</h2>
                 <div className="basic-supplies">
                     {list["basic_supplies"] != null &&
                     list["basic_supplies"].map((supply) =>
@@ -97,17 +98,20 @@ function SupplyList(props) {
                                     supply={supply}/>
                     )}
                 </div>
-                {Object.keys(list["categorized_supplies"]).map((category) =>
-                    <div key={category}>
-                        <h2>{category}</h2>
-                        {list["categorized_supplies"][category] !== null && (
-                            list["categorized_supplies"][category].map((supply) =>
-                                <SupplyItem saveChanges={saveItem}
-                                            key={supply.id}
-                                            supply={supply}/>
-                            ))}
-                    </div>
-                )}
+                {Object.keys(list["categorized_supplies"]).length > 0 &&
+                <div className="categorized">
+                    {Object.keys(list["categorized_supplies"]).map((category) =>
+                        <div key={category}>
+                            <h3>{category}</h3>
+                            {list["categorized_supplies"][category] !== null && (
+                                list["categorized_supplies"][category].map((supply) =>
+                                    <SupplyItem saveChanges={saveItem}
+                                                key={supply.id}
+                                                supply={supply}/>
+                                ))}
+                        </div>
+                    )}
+                </div>}
                 <AddSupply listID={list.list_id} addSupply={createItem}/>
             </div>
         ) : (

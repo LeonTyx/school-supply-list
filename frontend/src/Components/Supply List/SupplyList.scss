@@ -1,12 +1,27 @@
 .supply-list {
   background: #fff;
-  width: 50rem;
+  width: 35rem;
   margin: 1rem auto;
   padding: .5rem 1rem;
   border-radius: .25rem;
   max-width: calc(100% - 3rem);
 
-  .basic-supplies {
+  h2{
+    margin: .5rem 0;
+    color: #444;
+    text-align: center;
+  }
 
+  .basic-supplies {
+    padding-bottom: .5rem;
+  }
+
+  .categorized{
+    border-top: .15rem #eae7e7 solid;
+    h3{
+      margin: .5rem 0;
+      text-align: center;
+      color: #444;
+    }
   }
 }
