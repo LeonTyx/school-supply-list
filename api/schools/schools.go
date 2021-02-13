@@ -74,7 +74,8 @@ func GetSchool(db *database.DB) gin.HandlerFunc {
 			return
 		}
 
-		listRows, err := db.Db.Query(`SELECT list_id, grade, list_name, school_id from supply_list`)
+		listRows, err := db.Db.Query(`SELECT list_id, grade, list_name, school_id from supply_list 
+											WHERE school_id = $1`, school.SchoolID)
 		if err != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
 			return
