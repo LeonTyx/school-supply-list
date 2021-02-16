@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"school-supply-list/api/events"
 	"school-supply-list/api/permissions"
 	"school-supply-list/api/schools"
 	"school-supply-list/api/supplies"
@@ -129,3 +130,27 @@ func userRoutes(r *gin.RouterGroup, db *database.DB) {
 		authorization.CanDelete(),
 		users.DeleteUser(db))
 }
+
+func eventRoutes(r *gin.RouterGroup, db *database.DB) {
+	r.GET("/event/:id",
+		authorization.LoadPolicy(db, "event"),
+		authorization.CanView(),
+		events.CreateEvent(db))
+	r.GET("/event/:id",
+		authorization.LoadPolicy(db, "event"),
+		authorization.CanView(),
+		events.GetEvent(db))
+	r.GET("/event",
+		authorization.LoadPolicy(db, "event"),
+		authorization.CanView(),
+		events.GetEvents(db))
+	r.POST("/event/:id", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "event"),
+		authorization.CanEdit(),
+		events.UpdateEvent(db))
+	r.DELETE("/event/:id", authorization.ValidSession(db),
+		authorization.LoadPolicy(db, "event"),
+		authorization.CanDelete(),
+		events.DeleteEvent(db))
+}
+
