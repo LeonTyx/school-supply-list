@@ -1,4 +1,4 @@
-create table event_date
+create table if not exists event_date
 (
     start_time date,
     end_time date,
