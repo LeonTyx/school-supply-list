@@ -49,7 +49,7 @@ func GetSchool(db *database.DB) gin.HandlerFunc {
 		idString := c.Param("id")
 		id, err := strconv.Atoi(idString)
 		if err != nil {
-			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer")
+			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
 			return
 		}
 
@@ -151,6 +151,7 @@ func DeleteSchool(db *database.DB) gin.HandlerFunc {
 		row := db.Db.QueryRow(`DELETE from school where school.school_id=$1`, id)
 		if row.Err() != nil {
 			database.CheckDBErr(err.(*pq.Error), c)
+			return
 		}
 
 		c.JSON(200, nil)
