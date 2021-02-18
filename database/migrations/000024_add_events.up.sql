@@ -1,4 +1,4 @@
-create table event
+create table if not exists event
 (
     id serial not null,
     title varchar not null,
@@ -8,7 +8,7 @@ create table event
 create unique index event_id_uindex
     on event (id);
 
-alter table event
+alter table if exists event
     add constraint event_pk
         primary key (id);
 
