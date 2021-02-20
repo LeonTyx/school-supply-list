@@ -64,7 +64,6 @@ function Home() {
             {canCreate("school", user) && <CreateSchool addSchool={addSchool}/>}
         </div>
     );
-
 }
 
 export default Home;
