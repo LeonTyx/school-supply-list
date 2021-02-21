@@ -60,6 +60,8 @@ func listRoutes(r *gin.RouterGroup, db *database.DB) {
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanEdit(),
 		supplylist.UpdateSupplyList(db))
+	r.POST("/saved-list/:id", authorization.ValidSession(db),
+		supplylist.UpdateSavedList(db))
 	r.DELETE("/supply-list/:id", authorization.ValidSession(db),
 		authorization.LoadPolicy(db, "supply-list"),
 		authorization.CanDelete(),

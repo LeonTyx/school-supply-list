@@ -42,7 +42,8 @@ func CreateSupplyList(db *database.DB) gin.HandlerFunc {
 
 func GetSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
+		idString := c.Param("id")
+		id, err := strconv.Atoi(idString)
 		if err != nil {
 			c.AbortWithStatusJSON(400, "Invalid id. Must be an integer.")
 			return
@@ -162,6 +163,7 @@ func getItemsForUserList(id int, db *database.DB, googleID string) ([]supplies.S
 	}
 	return basicSupplies, categorizedSupplies, checked, nil
 }
+
 func UpdateSupplyList(db *database.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idString := c.Param("id")
@@ -188,6 +190,45 @@ func UpdateSupplyList(db *database.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(200, list)
+	}
+}
+
+func UpdateSavedList(db *database.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idString := c.Param("id")
+		listID, err := strconv.Atoi(idString)
+		if err != nil {
+			c.AbortWithStatusJSON(400, "Invalid listID. Must be an integer.")
+			return
+		}
+		var checked []int
+		err = json.NewDecoder(c.Request.Body).Decode(&checked)
+
+		session, err := db.SessionStore.Get(c.Request, "session")
+		if err != nil {
+			c.AbortWithStatusJSON(500, "The server was unable to retrieve this session")
+			return
+		}
+
+		googleID := session.Values["GoogleId"]
+		var userID string
+		userRows := db.Db.QueryRow(`SELECT user_id from account a where a.google_id=$1`, googleID)
+		if userRows.Err() != nil {
+			c.AbortWithStatusJSON(500, "User does not exist")
+			return
+		}
+		err = userRows.Scan(&userID)
+
+		db.Db.QueryRow(`DELETE FROM checked_items USING supply_item WHERE user_uuid=$1 AND list_id=$2;`, userID, listID)
+		for _, itemID := range checked {
+			db.Db.QueryRow(`INSERT INTO checked_items (item_id, user_uuid)
+									SELECT si.id, $1 FROM supply_item si
+									INNER JOIN supply_list sl on sl.list_id = si.list_id
+									WHERE id = $2 AND si.list_id=$3 ON CONFLICT ON CONSTRAINT checked_items_pk DO NOTHING`,
+									userID, itemID, listID)
+		}
+
+		c.JSON(200, checked)
 	}
 }
 
