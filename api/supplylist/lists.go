@@ -137,8 +137,8 @@ func getItemsForUserList(id int, db *database.DB, googleID string) ([]supplies.S
 	rows, err := db.Db.Query(`SELECT id, list_id, supply_name, supply_desc, category,
        									CASE WHEN user_uuid IS NOT NULL
        									    THEN 'true' ELSE 'false' END FROM supply_item sup
-										JOIN checked_items ci on sup.id = ci.item_id
-										WHERE list_id = $1 AND user_uuid=$2`, id, userID)
+										FULL JOIN checked_items ci on sup.id = ci.item_id
+										WHERE list_id = $1 AND (user_uuid=$2 OR user_uuid IS NULL)`, id, userID)
 	if err != nil {
 		return basicSupplies, categorizedSupplies, checked, err
 	}
