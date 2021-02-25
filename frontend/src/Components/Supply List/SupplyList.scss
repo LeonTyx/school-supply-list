@@ -24,4 +24,16 @@
       color: #444;
     }
   }
+
+  label.item-with-check{
+    display: block;
+    .supply-item{
+      display:inline-block;
+    }
+  }
+
+  .item-with-check:nth-child(2n){
+    border-radius: .25rem;
+    background: #f1f2f6;
+  }
 }

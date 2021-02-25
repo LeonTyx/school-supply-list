@@ -124,7 +124,7 @@ function SupplyList(props) {
                     {checked != null ?
                         list["basic_supplies"] != null &&
                         list["basic_supplies"].map((supply) =>
-                            <label key={supply.id}>
+                            <label key={supply.id}  className="item-with-check">
                                 <input type="checkbox"
                                        onChange={event => toggleCheckbox(event, supply.id)}
                                        checked={checked.includes(supply.id)}/>
@@ -148,7 +148,7 @@ function SupplyList(props) {
                             {checked != null ?
                                 list["categorized_supplies"][category] !== null && (
                                     list["categorized_supplies"][category].map((supply) =>
-                                        <label key={supply.id}>
+                                        <label key={supply.id} className="item-with-check">
                                             <input type="checkbox"
                                                    onChange={event => toggleCheckbox(event, supply.id)}
                                                    checked={checked.includes(supply.id)}/>

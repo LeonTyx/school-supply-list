@@ -102,7 +102,9 @@ func getItemsForList(id int, db *database.DB) ([]supplies.SupplyItem, map[string
 		var supply supplies.SupplyItem
 
 		err = rows.Scan(&supply.ID, &supply.ListID, &supply.Supply, &supply.Desc, &supply.Category)
-
+		if err != nil {
+			return basicSupplies, categorizedSupplies, err
+		}
 		// Check if item is categorized
 		if supply.Category.Valid {
 			// Either create a new map item or add to existing item
@@ -132,11 +134,11 @@ func getItemsForUserList(id int, db *database.DB, googleID string) ([]supplies.S
 		return basicSupplies, categorizedSupplies, checked, err
 	}
 
-	rows, err := db.Db.Query(`SELECT id, list_id, supply_name, supply_desc, category, 
-       									CASE WHEN user_uuid IS NOT NULL AND user_uuid = $1
+	rows, err := db.Db.Query(`SELECT id, list_id, supply_name, supply_desc, category,
+       									CASE WHEN user_uuid IS NOT NULL
        									    THEN 'true' ELSE 'false' END FROM supply_item sup
-										FULL JOIN checked_items ci on sup.id = ci.item_id
-										WHERE list_id = $2`, userID, id)
+										JOIN checked_items ci on sup.id = ci.item_id
+										WHERE list_id = $1 AND user_uuid=$2`, id, userID)
 	if err != nil {
 		return basicSupplies, categorizedSupplies, checked, err
 	}
